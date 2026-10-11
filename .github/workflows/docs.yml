@@ -28,12 +28,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check for gh-pages
+        id: gh-pages
+        run: |
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          fi
+
+      # gh-pages stores the previously published site, so older versions survive.
       - name: Checkout gh-pages
+        if: steps.gh-pages.outputs.exists == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: gh-pages
           path: gh-pages
-        continue-on-error: true # Handle first run where gh-pages doesn't exist
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
@@ -69,7 +77,23 @@ jobs:
           VERSION_DIR="target/deploy/${{ steps.version.outputs.version }}"
           mkdir -p "$VERSION_DIR"
           cp -r target/doc/* "$VERSION_DIR/"
-          
+
+          # Rebuild any released version whose docs are missing from gh-pages
+          for tag in $(git tag -l 'v*'); do
+            [ -d "target/deploy/$tag" ] && continue
+            echo "::notice::Rebuilding missing docs for $tag"
+            git worktree add -q "target/tags/$tag" "$tag"
+            if (cd "target/tags/$tag" && RUSTDOCFLAGS="--html-in-header $PWD/docs-header.html" \
+                  cargo doc --no-deps --all-features --target-dir "$GITHUB_WORKSPACE/target/tag-doc"); then
+              mkdir -p "target/deploy/$tag"
+              cp -r target/tag-doc/doc/* "target/deploy/$tag/"
+            else
+              echo "::warning::Could not build docs for $tag"
+            fi
+            rm -rf target/tag-doc/doc
+            git worktree remove --force "target/tags/$tag"
+          done
+
           # Landing page at the site root (the API docs live under latest/ and v*/)
           cp -r site/. target/deploy/
           
@@ -79,6 +103,19 @@ jobs:
             echo -n ", \"$tag\"" >> target/deploy/versions.json
           done
           echo -n ']' >> target/deploy/versions.json
+
+      - name: Save site to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd target/deploy
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "Deploy ${{ steps.version.outputs.version }} docs from ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
+          rm -rf .git
 
       - name: Setup Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
