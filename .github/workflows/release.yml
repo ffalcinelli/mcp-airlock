@@ -109,7 +109,8 @@ jobs:
           
           if [[ "${{ matrix.target }}" == *"windows"* ]]; then
             cp "target/${{ matrix.target }}/release/${BIN_NAME}" "dist/${BIN_NAME}"
-            cd dist && zip "../${PKG_NAME}.zip" "${BIN_NAME}"
+            # Git Bash on the Windows runners has no zip; 7-Zip is preinstalled.
+            cd dist && 7z a -tzip "../${PKG_NAME}.zip" "${BIN_NAME}"
           else
             cp "target/${{ matrix.target }}/release/${BIN_NAME}" "dist/${BIN_NAME}"
             tar -czf "${PKG_NAME}.tar.gz" -C dist "${BIN_NAME}"
