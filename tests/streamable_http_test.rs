@@ -3,11 +3,11 @@
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::IntoResponse;
 use axum::{routing::get, routing::post, Router};
-use mcp_passport::auth::{OidcConfig, Timeouts};
-use mcp_passport::config::AuthScheme;
-use mcp_passport::crypto::DpopKey;
-use mcp_passport::proxy::Proxy;
-use mcp_passport::vault::Vault;
+use mcp_airlock::auth::{OidcConfig, Timeouts};
+use mcp_airlock::config::AuthScheme;
+use mcp_airlock::crypto::DpopKey;
+use mcp_airlock::proxy::Proxy;
+use mcp_airlock::vault::Vault;
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};

@@ -1,6 +1,6 @@
-# mcp-passport setup guide
+# mcp-airlock setup guide
 
-This guide covers connecting an AI client to an OAuth-protected MCP server through `mcp-passport`: installation, registering the OAuth client, configuring the AI client, provider notes, and troubleshooting. For an overview, see the [README](README.md).
+This guide covers connecting an AI client to an OAuth-protected MCP server through `mcp-airlock`: installation, registering the OAuth client, configuring the AI client, provider notes, and troubleshooting. For an overview, see the [README](README.md).
 
 ## 1. Prerequisites
 
@@ -10,23 +10,23 @@ This guide covers connecting an AI client to an OAuth-protected MCP server throu
 
 ## 2. Installation
 
-Download the archive for your platform from the [releases page](https://github.com/ffalcinelli/mcp-passport/releases), or build it with Rust 1.88+:
+Download the archive for your platform from the [releases page](https://github.com/ffalcinelli/mcp-airlock/releases), or build it with Rust 1.88+:
 
 ```bash
-cargo install --git https://github.com/ffalcinelli/mcp-passport
+cargo install --git https://github.com/ffalcinelli/mcp-airlock
 ```
 
 ## 3. Configuration
 
-Every setting is a CLI flag or an `MCP_PASSPORT_*` environment variable; flags win. The [README](README.md#configuration) has the full table, and `mcp-passport --help` lists everything. The settings you usually need:
+Every setting is a CLI flag or an `MCP_AIRLOCK_*` environment variable; flags win. The [README](README.md#configuration) has the full table, and `mcp-airlock --help` lists everything. The settings you usually need:
 
 | Variable | Purpose |
 |----------|---------|
-| `MCP_PASSPORT_REMOTE_MCP_URL` | The MCP endpoint, e.g. `https://mcp.example.com/mcp` (required). |
-| `MCP_PASSPORT_OIDC_CLIENT_ID` | Your client ID (default `mcp-passport`). |
-| `MCP_PASSPORT_OIDC_ISSUER` | The issuer that client ID belongs to (recommended for pre-registered clients). |
-| `MCP_PASSPORT_OIDC_REDIRECT_URL` | Login callback, default `http://127.0.0.1:8082/callback`. It must be registered with the provider. |
-| `MCP_PASSPORT_OIDC_DISCOVERY_URL` | Only if the MCP server doesn't publish protected resource metadata. |
+| `MCP_AIRLOCK_REMOTE_MCP_URL` | The MCP endpoint, e.g. `https://mcp.example.com/mcp` (required). |
+| `MCP_AIRLOCK_OIDC_CLIENT_ID` | Your client ID (default `mcp-airlock`). |
+| `MCP_AIRLOCK_OIDC_ISSUER` | The issuer that client ID belongs to (recommended for pre-registered clients). |
+| `MCP_AIRLOCK_OIDC_REDIRECT_URL` | Login callback, default `http://127.0.0.1:8082/callback`. It must be registered with the provider. |
+| `MCP_AIRLOCK_OIDC_DISCOVERY_URL` | Only if the MCP server doesn't publish protected resource metadata. |
 
 ### How the authorization server is found
 
@@ -38,13 +38,13 @@ Every setting is a CLI flag or an `MCP_PASSPORT_*` environment variable; flags w
 
 ### Client registration
 
-- **Pre-registered client** (most common): register a public client with your provider and set `MCP_PASSPORT_OIDC_CLIENT_ID`. Also set `MCP_PASSPORT_OIDC_ISSUER`, so that the client ID is never presented to a different authorization server.
-- **Client ID Metadata Document**: host a JSON document at an https URL with a path, and use that URL as the client ID. The authorization server must advertise `client_id_metadata_document_supported`. Example document at `https://example.com/mcp-passport.json`:
+- **Pre-registered client** (most common): register a public client with your provider and set `MCP_AIRLOCK_OIDC_CLIENT_ID`. Also set `MCP_AIRLOCK_OIDC_ISSUER`, so that the client ID is never presented to a different authorization server.
+- **Client ID Metadata Document**: host a JSON document at an https URL with a path, and use that URL as the client ID. The authorization server must advertise `client_id_metadata_document_supported`. Example document at `https://example.com/mcp-airlock.json`:
 
   ```json
   {
-    "client_id": "https://example.com/mcp-passport.json",
-    "client_name": "mcp-passport",
+    "client_id": "https://example.com/mcp-airlock.json",
+    "client_name": "mcp-airlock",
     "redirect_uris": ["http://127.0.0.1:8082/callback"],
     "grant_types": ["authorization_code", "refresh_token"],
     "response_types": ["code"],
@@ -68,11 +68,11 @@ The first login requests the scopes from the server's challenge, or else the res
 {
   "mcpServers": {
     "secure-proxy": {
-      "command": "/path/to/mcp-passport",
+      "command": "/path/to/mcp-airlock",
       "env": {
-        "MCP_PASSPORT_REMOTE_MCP_URL": "https://mcp.example.com/mcp",
-        "MCP_PASSPORT_OIDC_CLIENT_ID": "mcp-passport",
-        "MCP_PASSPORT_OIDC_ISSUER": "https://auth.example.com/realms/mcp"
+        "MCP_AIRLOCK_REMOTE_MCP_URL": "https://mcp.example.com/mcp",
+        "MCP_AIRLOCK_OIDC_CLIENT_ID": "mcp-airlock",
+        "MCP_AIRLOCK_OIDC_ISSUER": "https://auth.example.com/realms/mcp"
       }
     }
   }
@@ -83,8 +83,8 @@ The first login requests the scopes from the server's challenge, or else the res
 
 ```bash
 claude mcp add secure-proxy \
-  -e MCP_PASSPORT_OIDC_ISSUER=https://auth.example.com/realms/mcp \
-  -- /path/to/mcp-passport --remote-mcp-url https://mcp.example.com/mcp
+  -e MCP_AIRLOCK_OIDC_ISSUER=https://auth.example.com/realms/mcp \
+  -- /path/to/mcp-airlock --remote-mcp-url https://mcp.example.com/mcp
 ```
 
 ### Gemini CLI
@@ -95,10 +95,10 @@ claude mcp add secure-proxy \
 {
   "mcpServers": {
     "secure-proxy": {
-      "command": "/path/to/mcp-passport",
+      "command": "/path/to/mcp-airlock",
       "env": {
-        "MCP_PASSPORT_REMOTE_MCP_URL": "https://mcp.example.com/mcp",
-        "MCP_PASSPORT_OIDC_CLIENT_ID": "mcp-passport"
+        "MCP_AIRLOCK_REMOTE_MCP_URL": "https://mcp.example.com/mcp",
+        "MCP_AIRLOCK_OIDC_CLIENT_ID": "mcp-airlock"
       },
       "trust": true
     }
@@ -106,11 +106,11 @@ claude mcp add secure-proxy \
 }
 ```
 
-The first request opens your browser on the provider's login page. The URL is also printed to stderr, so you can copy it if no browser opens; `MCP_PASSPORT_SKIP_OPEN_BROWSER=1` only prints it.
+The first request opens your browser on the provider's login page. The URL is also printed to stderr, so you can copy it if no browser opens; `MCP_AIRLOCK_SKIP_OPEN_BROWSER=1` only prints it.
 
 ## 5. Keycloak (tested with 26.8.0)
 
-In the `mcp-passport` client:
+In the `mcp-airlock` client:
 
 - **Client authentication** off (public client), **Standard flow** on.
 - **Advanced**: *Pushed authorization request required* on, *Proof Key for Code Exchange Code Challenge Method* `S256`, *OAuth 2.0 DPoP Bound Access Tokens* on.
@@ -124,11 +124,11 @@ In the `mcp-passport` client:
 
 ### Logs
 
-Logs go to stderr and to `mcp-passport.log` in the log directory; the path is printed at startup. Defaults:
+Logs go to stderr and to `mcp-airlock.log` in the log directory; the path is printed at startup. Defaults:
 
-- **Linux**: `$XDG_STATE_HOME/mcp-passport/logs` (usually `~/.local/state/mcp-passport/logs`)
-- **macOS**: `~/Library/Application Support/mcp-passport/logs`
-- **Windows**: `%LOCALAPPDATA%\mcp-passport\logs`
+- **Linux**: `$XDG_STATE_HOME/mcp-airlock/logs` (usually `~/.local/state/mcp-airlock/logs`)
+- **macOS**: `~/Library/Application Support/mcp-airlock/logs`
+- **Windows**: `%LOCALAPPDATA%\mcp-airlock\logs`
 
 Use `--log-level debug` (or `RUST_LOG=debug`) for detail.
 
@@ -144,19 +144,19 @@ Use `--log-level debug` (or `RUST_LOG=debug`) for detail.
 | `… is not the one this client is registered with (--oidc-issuer …)` | The MCP server now points at a different authorization server than your client ID belongs to. Check the server, or update `--oidc-issuer` and the client ID. |
 | `Authorization failed: access_denied: …` | The login was cancelled or refused at the provider. The provider's description follows the colon. |
 | `Authentication timed out or failed to receive callback` | Nobody completed the login within `--auth-timeout-secs` (default 300). |
-| `Authentication loop detected: the server rejected a freshly issued token` | The MCP server rejects tokens right after login, typically because of an audience or scope mismatch at the server. `mcp-passport` stops instead of reopening the browser. |
+| `Authentication loop detected: the server rejected a freshly issued token` | The MCP server rejects tokens right after login, typically because of an audience or scope mismatch at the server. `mcp-airlock` stops instead of reopening the browser. |
 | `Failed to bind to 127.0.0.1:8082 after 5 retries` | Another program uses the callback port. Pick another port with `--oidc-redirect-url` and register it with the provider. |
-| `Failed to store … in the OS keychain (on Linux this needs a running Secret Service …)` | No Secret Service on this Linux session. Start GNOME Keyring or KWallet, or use `MCP_PASSPORT_USE_MEMORY_VAULT=1` (credentials last only for the process lifetime). |
+| `Failed to store … in the OS keychain (on Linux this needs a running Secret Service …)` | No Secret Service on this Linux session. Start GNOME Keyring or KWallet, or use `MCP_AIRLOCK_USE_MEMORY_VAULT=1` (credentials last only for the process lifetime). |
 | `Token endpoint returned 400 …"not_allowed"…Offline tokens not allowed` | `--oidc-offline-access` is set, but the provider doesn't allow offline tokens for this client or user. Drop the flag. |
 | Server side: Keycloak introspection says `"active": false` | The resource server isn't in the token's audience. Add an audience mapper (section 5). |
 
 ### Clearing stored credentials
 
-Each MCP server has its own entries, all for the `--user-id` (default `default_user`): `mcp-passport:<id>` (access token), `mcp-passport:<id>-dpop` (DPoP key), `mcp-passport:<id>-refresh` (refresh token) and `mcp-passport:<id>-meta` (issuer, scopes, expiry). `<id>` is derived from the MCP server URL.
+Each MCP server has its own entries, all for the `--user-id` (default `default_user`): `mcp-airlock:<id>` (access token), `mcp-airlock:<id>-dpop` (DPoP key), `mcp-airlock:<id>-refresh` (refresh token) and `mcp-airlock:<id>-meta` (issuer, scopes, expiry). `<id>` is derived from the MCP server URL.
 
-- **macOS**: Keychain Access, search for `mcp-passport`.
+- **macOS**: Keychain Access, search for `mcp-airlock`.
 - **Windows**: Credential Manager → Windows Credentials.
-- **Linux**: Seahorse / KWallet Manager, or `secret-tool search --all service mcp-passport:<id>`. Entries are also cached in the kernel keyring until you log out.
+- **Linux**: Seahorse / KWallet Manager, or `secret-tool search --all service mcp-airlock:<id>`. Entries are also cached in the kernel keyring until you log out.
 
 ## 7. How the airlock works
 
@@ -166,12 +166,12 @@ Each MCP server has its own entries, all for the `--user-id` (default `default_u
 4. Otherwise your browser opens the login page. After you log in, the code is exchanged for a DPoP-bound token, which is stored in the keychain.
 5. The suspended requests resume with the new credentials.
 
-If the login fails (access denied, a provider error, or the timeout), the waiting requests get a JSON-RPC error. If a freshly issued token is rejected again right away, `mcp-passport` reports an authentication loop instead of reopening the browser.
+If the login fails (access denied, a provider error, or the timeout), the waiting requests get a JSON-RPC error. If a freshly issued token is rejected again right away, `mcp-airlock` reports an authentication loop instead of reopening the browser.
 
 ## 8. Customizing the login pages
 
-After the login, the browser shows an "Authentication Successful" or "Authentication Failed" page served by `mcp-passport`. To brand them:
+After the login, the browser shows an "Authentication Successful" or "Authentication Failed" page served by `mcp-airlock`. To brand them:
 
 1. Create a directory with `success.html` and `failure.html`.
 2. Use `{{ISSUER_NAME}}` and `{{RESOURCE_NAME}}` in either file, and `{{ERROR_MESSAGE}}` in `failure.html`. The values are HTML-escaped.
-3. Start `mcp-passport` with `--template-dir <dir>` (or `MCP_PASSPORT_TEMPLATE_DIR`).
+3. Start `mcp-airlock` with `--template-dir <dir>` (or `MCP_AIRLOCK_TEMPLATE_DIR`).

@@ -1,4 +1,4 @@
-# mcp-passport development guide
+# mcp-airlock development guide
 
 Internals, build requirements and the test strategy. For the contribution workflow, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -79,7 +79,7 @@ cargo doc --no-deps --open  # API docs
 Test helpers:
 - `Vault::in_memory` and `Timeouts::fast()` keep tests away from the real keychain and fast.
 - `tests/common` has the pinned container images, `StdioClient` (drives `run_with_vault` like an MCP client), and the strict MCP server.
-- `MCP_PASSPORT_TEST_KC_LOG_LEVEL` enables Keycloak debug logs in the Docker suites, which are dumped on failure.
+- `MCP_AIRLOCK_TEST_KC_LOG_LEVEL` enables Keycloak debug logs in the Docker suites, which are dumped on failure.
 
 `cargo bench --bench crate` measures DPoP signing and credential loading.
 

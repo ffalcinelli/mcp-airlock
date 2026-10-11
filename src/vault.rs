@@ -47,7 +47,7 @@ impl Secret {
 /// running Secret Service.
 #[cfg(target_os = "linux")]
 const KEYCHAIN_HINT: &str = " (on Linux this needs a running Secret Service such as GNOME \
-    Keyring or KWallet; MCP_PASSPORT_USE_MEMORY_VAULT=1 keeps credentials in memory only)";
+    Keyring or KWallet; MCP_AIRLOCK_USE_MEMORY_VAULT=1 keeps credentials in memory only)";
 #[cfg(not(target_os = "linux"))]
 const KEYCHAIN_HINT: &str = "";
 
@@ -89,7 +89,7 @@ pub struct Vault {
 pub fn service_name_for(remote_url: &str) -> String {
     use sha2::{Digest, Sha256};
     let digest = Sha256::digest(remote_url.trim_end_matches('/').as_bytes());
-    format!("mcp-passport:{}", &hex::encode(digest)[..16])
+    format!("mcp-airlock:{}", &hex::encode(digest)[..16])
 }
 
 impl Vault {
@@ -109,10 +109,10 @@ impl Vault {
         }
     }
 
-    /// Uses the in-memory backend when `MCP_PASSPORT_USE_MEMORY_VAULT` is set,
+    /// Uses the in-memory backend when `MCP_AIRLOCK_USE_MEMORY_VAULT` is set,
     /// otherwise the OS keychain.
     pub fn from_env(service: &str) -> Self {
-        if std::env::var("MCP_PASSPORT_USE_MEMORY_VAULT").is_ok() {
+        if std::env::var("MCP_AIRLOCK_USE_MEMORY_VAULT").is_ok() {
             Self::in_memory(service)
         } else {
             Self::keyring(service)
@@ -265,8 +265,8 @@ mod tests {
     #[test]
     fn test_service_name_for() {
         let a = service_name_for("https://a.example.com/mcp");
-        assert!(a.starts_with("mcp-passport:"));
-        assert_eq!(a.len(), "mcp-passport:".len() + 16);
+        assert!(a.starts_with("mcp-airlock:"));
+        assert_eq!(a.len(), "mcp-airlock:".len() + 16);
         assert_eq!(a, service_name_for("https://a.example.com/mcp/"));
         assert_ne!(a, service_name_for("https://b.example.com/mcp"));
     }
@@ -295,7 +295,7 @@ mod tests {
 
     #[test]
     fn test_vault_token_ops() -> Result<()> {
-        let vault = Vault::in_memory("mcp-passport-test");
+        let vault = Vault::in_memory("mcp-airlock-test");
         let user = "test_user_1";
         let token = "test_token_123";
 
@@ -309,7 +309,7 @@ mod tests {
 
     #[test]
     fn test_vault_refresh_token_ops() -> Result<()> {
-        let vault = Vault::in_memory("mcp-passport-test");
+        let vault = Vault::in_memory("mcp-airlock-test");
         vault.store_token("u", "access")?;
         vault.store_refresh_token("u", "refresh")?;
         assert_eq!(vault.get_refresh_token("u")?, Some("refresh".into()));
@@ -347,14 +347,14 @@ mod tests {
 
     #[test]
     fn test_delete_nonexistent_token() -> Result<()> {
-        let vault = Vault::in_memory("mcp-passport-test-nonexistent");
+        let vault = Vault::in_memory("mcp-airlock-test-nonexistent");
         assert!(vault.delete_token("non_existent_user").is_ok());
         Ok(())
     }
 
     #[test]
     fn test_vault_dpop_ops() -> Result<()> {
-        let vault = Vault::in_memory("mcp-passport-test");
+        let vault = Vault::in_memory("mcp-airlock-test");
         let user = "test_user_dpop";
         let key_bytes = b"test_key_bytes_123456789012345678";
 
@@ -370,14 +370,14 @@ mod tests {
 
     #[test]
     fn test_delete_nonexistent_dpop_key() -> Result<()> {
-        let vault = Vault::in_memory("mcp-passport-test-nonexistent-dpop");
+        let vault = Vault::in_memory("mcp-airlock-test-nonexistent-dpop");
         assert!(vault.delete_dpop_key("non_existent_user").is_ok());
         Ok(())
     }
 
     #[test]
     fn test_vault_dpop_hex_failure() -> Result<()> {
-        let vault = Vault::in_memory("mcp-passport-test");
+        let vault = Vault::in_memory("mcp-airlock-test");
         let user = "test_user_bad_hex";
         vault.set(user, Secret::DpopKey, "invalid hex")?;
 
@@ -404,7 +404,7 @@ mod tests {
     #[test]
     #[ignore]
     fn test_keyring_roundtrip_persists_across_instances() -> Result<()> {
-        let service = format!("mcp-passport-roundtrip-{}", uuid::Uuid::new_v4());
+        let service = format!("mcp-airlock-roundtrip-{}", uuid::Uuid::new_v4());
         let writer = Vault::keyring(&service);
         writer.store_token("u", "token-123")?;
         writer.store_dpop_key("u", &[1, 2, 3])?;
@@ -430,7 +430,7 @@ mod tests {
 
     #[test]
     fn test_vault_real_keyring_attempt() {
-        let vault = Vault::keyring("mcp-passport-unit-test-real");
+        let vault = Vault::keyring("mcp-airlock-unit-test-real");
 
         // This will likely fail in CI but it's okay, we just want to cover the lines.
         // We use a dummy user to avoid messing up real keys.

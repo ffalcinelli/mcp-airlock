@@ -614,7 +614,7 @@ impl AuthManager {
         );
 
         // Attempt to open the browser automatically (skip if in tests or explicitly requested)
-        let skip_open = std::env::var("MCP_PASSPORT_SKIP_OPEN_BROWSER").is_ok();
+        let skip_open = std::env::var("MCP_AIRLOCK_SKIP_OPEN_BROWSER").is_ok();
         let mut has_listener = url_tx.is_some();
 
         if !has_listener {
@@ -2047,7 +2047,7 @@ mod tests {
             let _ = axum::serve(par_listener, par_app).await;
         });
 
-        std::env::set_var("MCP_PASSPORT_SKIP_OPEN_BROWSER", "1");
+        std::env::set_var("MCP_AIRLOCK_SKIP_OPEN_BROWSER", "1");
 
         let res = am.reauthenticate("user", None, None).await;
         assert!(res.is_err());

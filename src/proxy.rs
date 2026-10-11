@@ -398,7 +398,7 @@ impl Proxy {
             }
             let list = serde_json::json!({
                 "jsonrpc": "2.0",
-                "id": format!("mcp-passport-tools-list-{page}"),
+                "id": format!("mcp-airlock-tools-list-{page}"),
                 "method": "tools/list",
                 "params": params,
             });

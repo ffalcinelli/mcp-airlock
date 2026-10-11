@@ -1,4 +1,4 @@
-# Contributing to mcp-passport
+# Contributing to mcp-airlock
 
 Thanks for your interest! Bug reports, feature requests, documentation fixes and code are all welcome.
 
@@ -6,8 +6,8 @@ Thanks for your interest! Bug reports, feature requests, documentation fixes and
 
 1. Fork the repository and clone your fork:
    ```bash
-   git clone https://github.com/<you>/mcp-passport.git
-   cd mcp-passport
+   git clone https://github.com/<you>/mcp-airlock.git
+   cd mcp-airlock
    ```
 2. Create a branch: `git checkout -b fix/short-description`.
 3. Read [DEVELOPMENT.md](DEVELOPMENT.md) for the architecture and the test suites.
@@ -34,7 +34,7 @@ cargo test                       # unit + integration suites, no Docker
 
 ## Reporting bugs
 
-Please include your OS, the `mcp-passport --version` output, your MCP server and authorization server (and their versions, if known), the steps to reproduce, the expected and actual behaviour, and logs from `--log-level debug`. **Remove tokens and other secrets** before sharing logs.
+Please include your OS, the `mcp-airlock --version` output, your MCP server and authorization server (and their versions, if known), the steps to reproduce, the expected and actual behaviour, and logs from `--log-level debug`. **Remove tokens and other secrets** before sharing logs.
 
 Security issues: please don't open a public issue. See [SECURITY.md](SECURITY.md).
 

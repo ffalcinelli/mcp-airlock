@@ -30,7 +30,7 @@ impl Challenge {
     }
 }
 
-/// The parameters of the `WWW-Authenticate` header(s) that mcp-passport acts on.
+/// The parameters of the `WWW-Authenticate` header(s) that mcp-airlock acts on.
 #[derive(Debug, Default)]
 pub(crate) struct WwwAuthenticate {
     pub challenges: Vec<Challenge>,

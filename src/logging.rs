@@ -58,7 +58,7 @@ mod tests {
 
     fn scratch() -> std::path::PathBuf {
         let dir =
-            std::env::temp_dir().join(format!("mcp-passport-logtest-{}", uuid::Uuid::new_v4()));
+            std::env::temp_dir().join(format!("mcp-airlock-logtest-{}", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(&dir).unwrap();
         dir
     }

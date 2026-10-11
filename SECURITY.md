@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-`mcp-passport` is pre-1.0. Security fixes go to `main` and to the latest release.
+`mcp-airlock` is pre-1.0. Security fixes go to `main` and to the latest release.
 
 | Version | Supported |
 | ------- | --------- |
@@ -30,7 +30,7 @@ You'll get an acknowledgement within a few business days. This is a community-ma
 
 ## Threat model
 
-`mcp-passport` runs on the user's machine, between a local AI client (over stdio) and a remote MCP server (over HTTPS). It aims to protect the user's credentials and to send them only where they belong.
+`mcp-airlock` runs on the user's machine, between a local AI client (over stdio) and a remote MCP server (over HTTPS). It aims to protect the user's credentials and to send them only where they belong.
 
 **What it defends against**
 

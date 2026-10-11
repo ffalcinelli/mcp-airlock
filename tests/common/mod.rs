@@ -40,9 +40,9 @@ pub async fn start_keycloak() -> anyhow::Result<Keycloak> {
     let realm_path = std::env::current_dir()?.join("keycloak-realm.json");
     let realm_path = realm_path.to_str().expect("utf-8 path").to_string();
 
-    // e.g. MCP_PASSPORT_TEST_KC_LOG_LEVEL="INFO,org.keycloak.protocol.oidc:DEBUG"
+    // e.g. MCP_AIRLOCK_TEST_KC_LOG_LEVEL="INFO,org.keycloak.protocol.oidc:DEBUG"
     let log_level =
-        std::env::var("MCP_PASSPORT_TEST_KC_LOG_LEVEL").unwrap_or_else(|_| "INFO".into());
+        std::env::var("MCP_AIRLOCK_TEST_KC_LOG_LEVEL").unwrap_or_else(|_| "INFO".into());
     let container = GenericImage::new(KEYCLOAK_IMAGE.0, KEYCLOAK_IMAGE.1)
         .with_wait_for(WaitFor::message_on_stdout("Listening on:"))
         .with_env_var("KC_LOG_LEVEL", log_level)
@@ -159,8 +159,8 @@ pub async fn start_chrome() -> anyhow::Result<ContainerAsync<GenericImage>> {
 
 pub mod mcp_server;
 
-use mcp_passport::config::Config;
-use mcp_passport::vault::Vault;
+use mcp_airlock::config::Config;
+use mcp_airlock::vault::Vault;
 use serde_json::{json, Value};
 use std::time::Duration;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader, DuplexStream, Lines};
@@ -170,7 +170,7 @@ pub fn modern(id: impl Into<Value>, method: &str, params: Value) -> Value {
     let mut params = params;
     params["_meta"] = json!({
         "io.modelcontextprotocol/protocolVersion": mcp_server::MODERN,
-        "io.modelcontextprotocol/clientInfo": {"name": "mcp-passport-tests", "version": "1.0.0"},
+        "io.modelcontextprotocol/clientInfo": {"name": "mcp-airlock-tests", "version": "1.0.0"},
         "io.modelcontextprotocol/clientCapabilities": {}
     });
     json!({"jsonrpc": "2.0", "id": id.into(), "method": method, "params": params})
@@ -178,12 +178,12 @@ pub fn modern(id: impl Into<Value>, method: &str, params: Value) -> Value {
 
 /// Parses CLI arguments into a Config (the binary name is added).
 pub fn config(args: &[&str]) -> Config {
-    let mut all = vec!["mcp-passport"];
+    let mut all = vec!["mcp-airlock"];
     all.extend_from_slice(args);
     <Config as clap::Parser>::try_parse_from(all).expect("valid test config")
 }
 
-/// Drives `mcp_passport::run_with_vault` through its stdio, like an MCP client.
+/// Drives `mcp_airlock::run_with_vault` through its stdio, like an MCP client.
 pub struct StdioClient {
     writer: DuplexStream,
     lines: Lines<BufReader<DuplexStream>>,
@@ -194,7 +194,7 @@ impl StdioClient {
     pub fn start(config: Config, vault: Vault) -> Self {
         let (writer, server_in) = tokio::io::duplex(1 << 20);
         let (server_out, reader) = tokio::io::duplex(1 << 20);
-        let run = tokio::spawn(mcp_passport::run_with_vault(
+        let run = tokio::spawn(mcp_airlock::run_with_vault(
             config, vault, server_in, server_out,
         ));
         Self {

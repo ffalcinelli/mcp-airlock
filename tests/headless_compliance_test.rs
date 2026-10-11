@@ -10,10 +10,10 @@ use axum::{
     Json, Router,
 };
 use fantoccini::{ClientBuilder, Locator};
-use mcp_passport::auth::OidcConfig;
-use mcp_passport::config::AuthScheme;
-use mcp_passport::proxy::Proxy;
-use mcp_passport::vault::Vault;
+use mcp_airlock::auth::OidcConfig;
+use mcp_airlock::config::AuthScheme;
+use mcp_airlock::proxy::Proxy;
+use mcp_airlock::vault::Vault;
 use serde_json::{json, Value};
 use std::sync::Arc;
 use std::time::Duration;
@@ -70,7 +70,7 @@ struct AppState {
 #[ignore]
 async fn test_full_compliance_flow_headless() -> anyhow::Result<()> {
     // Ensure we use the memory vault and skip browser for reliability in all environments
-    std::env::set_var("MCP_PASSPORT_SKIP_OPEN_BROWSER", "1");
+    std::env::set_var("MCP_AIRLOCK_SKIP_OPEN_BROWSER", "1");
 
     // 0. Setup tracing
     let _ = tracing_subscriber::fmt()
@@ -175,7 +175,7 @@ async fn test_full_compliance_flow_headless() -> anyhow::Result<()> {
     };
 
     // 5. Initialize Proxy
-    let test_svc = "mcp-passport-compliance-headless-v1";
+    let test_svc = "mcp-airlock-compliance-headless-v1";
     let vault = Vault::in_memory(test_svc);
     let proxy = Proxy::new(
         &mcp_url,
