@@ -83,6 +83,7 @@ jobs:
         run: pip install cargo-zigbuild
 
       - name: Build Binary
+        shell: bash
         run: |
           if [ "${{ matrix.build-tool }}" = "cargo-zigbuild" ]; then
             cargo zigbuild --release --target ${{ matrix.target }}
