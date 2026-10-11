@@ -4,3 +4,6 @@
 ## 2024-09-02 - HTTP Header Parsing Allocations
 **Learning:** Parsing the `WWW-Authenticate` header string generated multiple heap allocations because `extract_param` was creating owned `String`s for each matching parameter (e.g., scope, error, resource_metadata), despite only being needed temporarily for condition checks and potential downstream authentication triggers.
 **Action:** Changed the string extraction utility and parsing structs (`WwwAuthenticate`) to use zero-allocation string slices (`&str`) with explicit lifetimes (`<'a>`), converting to owned `String`s only at the very end of the execution path where ownership is strictly required by the background tasks.
+## 2026-10-11 - Correct capacity for manual string building
+**Learning:** When replacing format!() with String::with_capacity() + push_str(), an under-calculated capacity completely breaks the performance benefit by causing reallocation anyway. For static string fragments in a JSON payload, count exact characters carefully (e.g. 40, not 33). Also, NEVER leave scratchpad scripts and compiled benchmarking binaries in the repository root when submitting changes!
+**Action:** Always count static string lengths perfectly for capacity planning, and thoroughly clean the git working tree (e.g., using git clean or manual rm) of temporary benchmarking scripts before creating PRs.

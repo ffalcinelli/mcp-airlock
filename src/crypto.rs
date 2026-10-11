@@ -152,7 +152,13 @@ impl DpopKey {
 /// RFC 7638 thumbprint of a P-256 key: SHA-256 over the required members in
 /// lexicographic order, without whitespace.
 fn ec_thumbprint(x: &str, y: &str) -> String {
-    let canonical = format!(r#"{{"crv":"P-256","kty":"EC","x":"{x}","y":"{y}"}}"#);
+    // 40 is the length of `{"crv":"P-256","kty":"EC","x":"","y":""}`
+    let mut canonical = String::with_capacity(40 + x.len() + y.len());
+    canonical.push_str(r#"{"crv":"P-256","kty":"EC","x":""#);
+    canonical.push_str(x);
+    canonical.push_str(r#"","y":""#);
+    canonical.push_str(y);
+    canonical.push_str(r#""}"#);
     URL_SAFE_NO_PAD.encode(Sha256::digest(canonical.as_bytes()))
 }
 
