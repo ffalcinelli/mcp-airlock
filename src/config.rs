@@ -18,7 +18,7 @@ pub enum AuthScheme {
 
 /// mcp-passport's configuration.
 #[derive(Parser, Debug, Clone)]
-#[command(author, version, about, long_about = None)]
+#[command(author, version, about = "Secure 1:1 transparent Layer 7 proxy for the Model Context Protocol (MCP)", long_about = None)]
 pub struct Config {
     /// Remote MCP endpoint (the Streamable HTTP URL of the server)
     #[arg(

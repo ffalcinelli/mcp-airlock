@@ -1,3 +1,4 @@
+use colored::Colorize;
 use mcp_passport::config::Config;
 use tracing::info;
 use tracing_subscriber::fmt;
@@ -5,13 +6,18 @@ use tracing_subscriber::prelude::*;
 use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() {
     let config = Config::parse();
 
     // Log files can contain session metadata: keep the directory private.
     let log_dir = config.resolved_log_dir();
     if let Err(e) = mcp_passport::logging::prepare_log_dir(&log_dir) {
-        eprintln!("{:#}", e);
+        eprintln!(
+            "{} Failed to prepare log directory at {}: {:#}",
+            "error:".red().bold(),
+            log_dir.display(),
+            e
+        );
         std::process::exit(1);
     }
 
@@ -34,7 +40,26 @@ async fn main() -> anyhow::Result<()> {
     );
     info!("Configuration: {:?}", config);
 
-    mcp_passport::run(config, tokio::io::stdin(), tokio::io::stdout()).await
+    if let Err(e) = mcp_passport::run(config, tokio::io::stdin(), tokio::io::stdout()).await {
+        eprintln!("{} {:#}", "error:".red().bold(), e);
+
+        let err_str = format!("{:#}", e);
+        if err_str.contains("must use HTTPS") {
+            eprintln!(
+                "{} Use an {} URL, or pass {} for local development.",
+                "hint:".blue().bold(),
+                "https://".cyan(),
+                "--allow-insecure-http".cyan()
+            );
+        } else if err_str.contains("already in use") {
+            eprintln!(
+                "{} The local callback port is busy. Try closing other instances of mcp-passport.",
+                "hint:".blue().bold()
+            );
+        }
+
+        std::process::exit(1);
+    }
 }
 
 #[cfg(test)]
