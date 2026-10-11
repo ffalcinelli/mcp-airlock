@@ -4,11 +4,11 @@ use axum::extract::{Form, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::IntoResponse;
 use axum::{routing::post, Json, Router};
-use mcp_passport::auth::{OidcConfig, Timeouts};
-use mcp_passport::config::AuthScheme;
-use mcp_passport::crypto::DpopKey;
-use mcp_passport::proxy::Proxy;
-use mcp_passport::vault::Vault;
+use mcp_airlock::auth::{OidcConfig, Timeouts};
+use mcp_airlock::config::AuthScheme;
+use mcp_airlock::crypto::DpopKey;
+use mcp_airlock::proxy::Proxy;
+use mcp_airlock::vault::Vault;
 use serde_json::json;
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -207,8 +207,8 @@ async fn test_step_up_never_uses_refresh() {
     );
 }
 
-fn expired_meta() -> mcp_passport::vault::CredentialMeta {
-    mcp_passport::vault::CredentialMeta {
+fn expired_meta() -> mcp_airlock::vault::CredentialMeta {
+    mcp_airlock::vault::CredentialMeta {
         expires_at: Some(1),
         ..Default::default()
     }

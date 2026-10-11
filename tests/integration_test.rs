@@ -2,11 +2,11 @@ mod common;
 
 use axum::http::HeaderMap;
 use axum::{routing::post, Json, Router};
-use mcp_passport::auth::OidcConfig;
-use mcp_passport::config::AuthScheme;
-use mcp_passport::crypto::DpopKey;
-use mcp_passport::proxy::Proxy;
-use mcp_passport::vault::Vault;
+use mcp_airlock::auth::OidcConfig;
+use mcp_airlock::config::AuthScheme;
+use mcp_airlock::crypto::DpopKey;
+use mcp_airlock::proxy::Proxy;
+use mcp_airlock::vault::Vault;
 use serde_json::{json, Value};
 use std::time::Duration;
 use tokio::io::{self, AsyncBufReadExt, AsyncWriteExt, BufReader};
@@ -49,7 +49,7 @@ async fn mock_mcp_handler(headers: HeaderMap, Json(payload): Json<Value>) -> Jso
 #[ignore]
 async fn test_fapi_dpop_proxy_with_testcontainers() -> anyhow::Result<()> {
     // Ensure we use the memory vault and skip browser for reliability in all environments
-    std::env::set_var("MCP_PASSPORT_SKIP_OPEN_BROWSER", "1");
+    std::env::set_var("MCP_AIRLOCK_SKIP_OPEN_BROWSER", "1");
 
     // 1. Setup tracing
     let _ = tracing_subscriber::fmt()
@@ -77,7 +77,7 @@ async fn test_fapi_dpop_proxy_with_testcontainers() -> anyhow::Result<()> {
     info!("Mock MCP server started at {}", mock_url);
 
     // 4. Seed the vault for test_user
-    let test_svc = "mcp-passport-keycloak-integration-v10";
+    let test_svc = "mcp-airlock-keycloak-integration-v10";
     let vault = Vault::in_memory(test_svc);
     vault.store_token("test_user_kc", "test_access_token")?;
     let dpop_key = DpopKey::generate();
@@ -85,7 +85,7 @@ async fn test_fapi_dpop_proxy_with_testcontainers() -> anyhow::Result<()> {
 
     // 5. Initialize OidcConfig and Proxy
     let oidc_config = OidcConfig {
-        client_id: "mcp-passport".into(),
+        client_id: "mcp-airlock".into(),
         redirect_url: "http://127.0.0.1:8082/callback".into(),
         auth_url_override: Some(format!("{}/auth", oidc_base)),
         token_url_override: Some(format!("{}/token", oidc_base)),

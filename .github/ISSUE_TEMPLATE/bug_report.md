@@ -17,7 +17,7 @@
 ## Environment
 - **Operating System**: (e.g., macOS Sonoma, Windows 11, Ubuntu 22.04)
 - **Rust Version**: `rustc --version`
-- **mcp-passport version**: (if applicable)
+- **mcp-airlock version**: (if applicable)
 
 ## Logs
 <!-- If possible, provide logs by running with RUST_LOG=debug. -->

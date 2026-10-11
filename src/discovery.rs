@@ -24,7 +24,7 @@ const RESOURCE_METADATA_SUFFIX: &str = "oauth-protected-resource";
 const OAUTH_AS_SUFFIX: &str = "oauth-authorization-server";
 const OIDC_SUFFIX: &str = "openid-configuration";
 
-/// The subset of RFC 8414 / OIDC Discovery metadata used by mcp-passport.
+/// The subset of RFC 8414 / OIDC Discovery metadata used by mcp-airlock.
 #[derive(Deserialize, Debug, Clone)]
 pub(crate) struct AuthServerMetadata {
     pub issuer: String,
@@ -53,7 +53,7 @@ impl AuthServerMetadata {
     }
 }
 
-/// The subset of RFC 9728 Protected Resource Metadata used by mcp-passport.
+/// The subset of RFC 9728 Protected Resource Metadata used by mcp-airlock.
 #[derive(Deserialize, Debug, Default)]
 struct ResourceMetadata {
     resource: Option<String>,

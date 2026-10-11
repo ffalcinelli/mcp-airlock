@@ -4,10 +4,10 @@ use anyhow::Context;
 use axum::http::{HeaderMap, StatusCode};
 use axum::{extract as ax_extract, routing::post, Json, Router};
 use fantoccini::{ClientBuilder, Locator};
-use mcp_passport::auth::OidcConfig;
-use mcp_passport::config::AuthScheme;
-use mcp_passport::proxy::Proxy;
-use mcp_passport::vault::Vault;
+use mcp_airlock::auth::OidcConfig;
+use mcp_airlock::config::AuthScheme;
+use mcp_airlock::proxy::Proxy;
+use mcp_airlock::vault::Vault;
 use serde_json::{json, Value};
 use std::time::Duration;
 use tokio::sync::oneshot;
@@ -80,7 +80,7 @@ async fn mock_mcp_handler(
 #[ignore]
 async fn test_jdoe_login_and_tool_invocation() -> anyhow::Result<()> {
     // 0. Setup environment and tracing
-    std::env::set_var("MCP_PASSPORT_SKIP_OPEN_BROWSER", "1");
+    std::env::set_var("MCP_AIRLOCK_SKIP_OPEN_BROWSER", "1");
 
     let _ = tracing_subscriber::fmt()
         .with_env_filter("info")
@@ -144,7 +144,7 @@ async fn test_jdoe_login_and_tool_invocation() -> anyhow::Result<()> {
 
     let oidc_config = OidcConfig {
         discovery_url: Some(oidc_discovery),
-        client_id: "mcp-passport".into(),
+        client_id: "mcp-airlock".into(),
         redirect_url: redirect_url.to_string(),
         ..Default::default()
     };
@@ -153,7 +153,7 @@ async fn test_jdoe_login_and_tool_invocation() -> anyhow::Result<()> {
         &mock_url,
         user_id,
         oidc_config.clone(),
-        Vault::in_memory("mcp-passport-jdoe-test"),
+        Vault::in_memory("mcp-airlock-jdoe-test"),
         "2025-11-25",
         AuthScheme::Bearer,
     );

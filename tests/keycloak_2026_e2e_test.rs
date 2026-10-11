@@ -13,10 +13,10 @@ mod common;
 use common::mcp_server::{self, Introspection, ServerOptions, MODERN};
 use common::modern;
 use fantoccini::{Client, ClientBuilder, Locator};
-use mcp_passport::auth::{OidcConfig, Timeouts};
-use mcp_passport::config::AuthScheme;
-use mcp_passport::proxy::Proxy;
-use mcp_passport::vault::Vault;
+use mcp_airlock::auth::{OidcConfig, Timeouts};
+use mcp_airlock::config::AuthScheme;
+use mcp_airlock::proxy::Proxy;
+use mcp_airlock::vault::Vault;
 use serde_json::{json, Value};
 use std::sync::Arc;
 use std::time::Duration;
@@ -96,12 +96,12 @@ where
 #[ignore]
 async fn test_keycloak_26_8_with_mcp_2026_07_28() -> anyhow::Result<()> {
     let _ = tracing_subscriber::fmt()
-        .with_env_filter("info,mcp_passport=debug")
+        .with_env_filter("info,mcp_airlock=debug")
         .with_writer(std::io::stderr)
         .try_init();
 
     let kc = common::start_keycloak().await?;
-    common::add_optional_scopes(&kc, "mcp-passport", &["mcp:tools", "mcp:admin"]).await?;
+    common::add_optional_scopes(&kc, "mcp-airlock", &["mcp:tools", "mcp:admin"]).await?;
     let _chrome = common::start_chrome().await?;
 
     let server = mcp_server::start(ServerOptions {
@@ -121,7 +121,7 @@ async fn test_keycloak_26_8_with_mcp_2026_07_28() -> anyhow::Result<()> {
         &server.url(),
         "jdoe",
         OidcConfig {
-            client_id: "mcp-passport".into(),
+            client_id: "mcp-airlock".into(),
             redirect_url: "http://127.0.0.1:8082/callback".into(),
             internal_url_tx: slot.clone(),
             timeouts: Timeouts {

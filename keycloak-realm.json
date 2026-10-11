@@ -4,8 +4,8 @@
   "enabled": true,
   "clients": [
     {
-      "clientId": "mcp-passport",
-      "name": "MCP Passport Proxy",
+      "clientId": "mcp-airlock",
+      "name": "MCP Airlock Proxy",
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "publicClient": true,

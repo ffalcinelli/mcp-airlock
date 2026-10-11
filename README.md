@@ -1,20 +1,20 @@
-# mcp-passport
+# mcp-airlock
 
-[![CI](https://github.com/ffalcinelli/mcp-passport/actions/workflows/ci.yml/badge.svg)](https://github.com/ffalcinelli/mcp-passport/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/ffalcinelli/mcp-passport/graph/badge.svg)](https://codecov.io/gh/ffalcinelli/mcp-passport)
-[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://ffalcinelli.github.io/mcp-passport/)
+[![CI](https://github.com/ffalcinelli/mcp-airlock/actions/workflows/ci.yml/badge.svg)](https://github.com/ffalcinelli/mcp-airlock/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/ffalcinelli/mcp-airlock/graph/badge.svg)](https://codecov.io/gh/ffalcinelli/mcp-airlock)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://ffalcinelli.github.io/mcp-airlock/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Rust 1.88+](https://img.shields.io/badge/rust-1.88%2B-orange.svg)](Cargo.toml)
 
 **A local stdio bridge that connects AI clients to OAuth-protected remote MCP servers, with FAPI 2.0 security: PAR, PKCE and DPoP-bound tokens.**
 
-Your AI client (Claude Desktop, Claude Code, Gemini CLI, …) launches `mcp-passport` like any local MCP server. `mcp-passport` forwards every message to the remote server over HTTPS. When the server asks for credentials, it discovers the authorization server, logs you in through your browser, and keeps the tokens in your OS keychain, without the client knowing anything about OAuth.
+Your AI client (Claude Desktop, Claude Code, Gemini CLI, …) launches `mcp-airlock` like any local MCP server. `mcp-airlock` forwards every message to the remote server over HTTPS. When the server asks for credentials, it discovers the authorization server, logs you in through your browser, and keeps the tokens in your OS keychain, without the client knowing anything about OAuth.
 
-📖 **[Website & API docs](https://ffalcinelli.github.io/mcp-passport/)** · [Setup guide](GUIDE.md) · [Development](DEVELOPMENT.md) · [Changelog](CHANGELOG.md) · [Security](SECURITY.md)
+📖 **[Website & API docs](https://ffalcinelli.github.io/mcp-airlock/)** · [Setup guide](GUIDE.md) · [Development](DEVELOPMENT.md) · [Changelog](CHANGELOG.md) · [Security](SECURITY.md)
 
 ## Why
 
-Remote MCP servers protect their tools with OAuth, but many clients only speak stdio, and even OAuth-capable clients rarely do sender-constrained tokens. `mcp-passport` closes that gap:
+Remote MCP servers protect their tools with OAuth, but many clients only speak stdio, and even OAuth-capable clients rarely do sender-constrained tokens. `mcp-airlock` closes that gap:
 
 - **No bearer tokens to steal.** Access tokens are bound to a per-login P-256 key (DPoP). A leaked token is useless without the key, which never leaves your machine.
 - **Spec-compliant discovery.** Point it at an MCP server URL and nothing else. The authorization server is found through the server's protected resource metadata.
@@ -24,18 +24,18 @@ Remote MCP servers protect their tools with OAuth, but many clients only speak s
 
 ### 1. Install
 
-Download a binary for your platform from the [releases page](https://github.com/ffalcinelli/mcp-passport/releases) (`.tar.gz` for Linux and macOS, `.zip` for Windows), or build from source with Rust 1.88+:
+Download a binary for your platform from the [releases page](https://github.com/ffalcinelli/mcp-airlock/releases) (`.tar.gz` for Linux and macOS, `.zip` for Windows), or build from source with Rust 1.88+:
 
 ```bash
-cargo install --git https://github.com/ffalcinelli/mcp-passport
+cargo install --git https://github.com/ffalcinelli/mcp-airlock
 # or
-git clone https://github.com/ffalcinelli/mcp-passport && cd mcp-passport
-cargo build --release   # → target/release/mcp-passport
+git clone https://github.com/ffalcinelli/mcp-airlock && cd mcp-airlock
+cargo build --release   # → target/release/mcp-airlock
 ```
 
 ### 2. Register the client
 
-At your authorization server, create a **public** client (for example `mcp-passport`) with PAR, PKCE S256 and DPoP enabled, and the redirect URI `http://127.0.0.1:8082/callback`. See the [Keycloak notes](#keycloak) below, or [GUIDE.md](GUIDE.md#client-registration) for Client ID Metadata Documents.
+At your authorization server, create a **public** client (for example `mcp-airlock`) with PAR, PKCE S256 and DPoP enabled, and the redirect URI `http://127.0.0.1:8082/callback`. See the [Keycloak notes](#keycloak) below, or [GUIDE.md](GUIDE.md#client-registration) for Client ID Metadata Documents.
 
 ### 3. Add it to your AI client
 
@@ -45,10 +45,10 @@ At your authorization server, create a **public** client (for example `mcp-passp
 {
   "mcpServers": {
     "my-secure-server": {
-      "command": "/path/to/mcp-passport",
+      "command": "/path/to/mcp-airlock",
       "args": [
         "--remote-mcp-url", "https://mcp.example.com/mcp",
-        "--oidc-client-id", "mcp-passport"
+        "--oidc-client-id", "mcp-airlock"
       ]
     }
   }
@@ -58,8 +58,8 @@ At your authorization server, create a **public** client (for example `mcp-passp
 **Claude Code**:
 
 ```bash
-claude mcp add my-secure-server -- /path/to/mcp-passport \
-  --remote-mcp-url https://mcp.example.com/mcp --oidc-client-id mcp-passport
+claude mcp add my-secure-server -- /path/to/mcp-airlock \
+  --remote-mcp-url https://mcp.example.com/mcp --oidc-client-id mcp-airlock
 ```
 
 **Gemini CLI** (`settings.json`):
@@ -68,10 +68,10 @@ claude mcp add my-secure-server -- /path/to/mcp-passport \
 {
   "mcpServers": {
     "my-secure-server": {
-      "command": "/path/to/mcp-passport",
+      "command": "/path/to/mcp-airlock",
       "env": {
-        "MCP_PASSPORT_REMOTE_MCP_URL": "https://mcp.example.com/mcp",
-        "MCP_PASSPORT_OIDC_CLIENT_ID": "mcp-passport"
+        "MCP_AIRLOCK_REMOTE_MCP_URL": "https://mcp.example.com/mcp",
+        "MCP_AIRLOCK_OIDC_CLIENT_ID": "mcp-airlock"
       }
     }
   }
@@ -85,7 +85,7 @@ On the first request your browser opens the login page; the URL is also printed 
 ```mermaid
 sequenceDiagram
     participant C as AI client
-    participant P as mcp-passport
+    participant P as mcp-airlock
     participant K as OS keychain
     participant S as MCP server
     participant A as Authorization server
@@ -139,30 +139,30 @@ sequenceDiagram
 
 ## Configuration
 
-Every option is a CLI flag or an environment variable (`mcp-passport --help`).
+Every option is a CLI flag or an environment variable (`mcp-airlock --help`).
 
 | Flag | Environment variable | Default | Description |
 |------|----------------------|---------|-------------|
-| `--remote-mcp-url` | `MCP_PASSPORT_REMOTE_MCP_URL` | **required** | Remote MCP endpoint, e.g. `https://mcp.example.com/mcp` |
-| `--oidc-client-id` | `MCP_PASSPORT_OIDC_CLIENT_ID` | `mcp-passport` | Pre-registered client ID, or the https URL of a Client ID Metadata Document |
-| `--oidc-redirect-url` | `MCP_PASSPORT_OIDC_REDIRECT_URL` | `http://127.0.0.1:8082/callback` | Loopback callback (`http`, loopback host, explicit port) |
-| `--oidc-issuer` | `MCP_PASSPORT_OIDC_ISSUER` | | Issuer your client ID is registered with; discovery must find exactly this one |
-| `--oidc-discovery-url` | `MCP_PASSPORT_OIDC_DISCOVERY_URL` | | Authorization server metadata URL (skips discovery from the MCP server) |
-| `--kc-auth-url`, `--kc-token-url`, `--kc-par-url` | `MCP_PASSPORT_KC_AUTH_URL`, `…_KC_TOKEN_URL`, `…_KC_PAR_URL` | | Endpoint overrides (no discovery when all three are set) |
-| `--oidc-offline-access` | `MCP_PASSPORT_OIDC_OFFLINE_ACCESS` | off | Also request `offline_access` when the provider offers it |
-| `--auth-scheme` | `MCP_PASSPORT_AUTH_SCHEME` | `bearer` | `Authorization` scheme (`bearer` or `dpop`); the DPoP proof is sent either way |
-| `--auth-timeout-secs` | `MCP_PASSPORT_AUTH_TIMEOUT_SECS` | `300` | How long to wait for the browser login |
-| `--remote-sse-url` | `MCP_PASSPORT_REMOTE_SSE_URL` | the MCP URL | Standalone SSE endpoint of legacy servers |
-| `--mcp-protocol-version` | `MCP_PASSPORT_MCP_PROTOCOL_VERSION` | `2025-11-25` | Fallback `MCP-Protocol-Version` when a message doesn't determine it |
-| `--allow-insecure-http` | `MCP_PASSPORT_ALLOW_INSECURE_HTTP` | off | Allow `http://` on non-loopback hosts (development only) |
-| `--user-id` | `MCP_PASSPORT_USER_ID` | `default_user` | Name the credentials are stored under in the keychain |
-| `--template-dir` | `MCP_PASSPORT_TEMPLATE_DIR` | | Custom `success.html` / `failure.html` for the login callback |
-| `--log-level` | `MCP_PASSPORT_LOG_LEVEL` | `info` | `error`, `warn`, `info`, `debug` or `trace` (`RUST_LOG` also works) |
-| `--log-dir` | `MCP_PASSPORT_LOG_DIR` | per-user state dir | Where `mcp-passport.log` is written |
+| `--remote-mcp-url` | `MCP_AIRLOCK_REMOTE_MCP_URL` | **required** | Remote MCP endpoint, e.g. `https://mcp.example.com/mcp` |
+| `--oidc-client-id` | `MCP_AIRLOCK_OIDC_CLIENT_ID` | `mcp-airlock` | Pre-registered client ID, or the https URL of a Client ID Metadata Document |
+| `--oidc-redirect-url` | `MCP_AIRLOCK_OIDC_REDIRECT_URL` | `http://127.0.0.1:8082/callback` | Loopback callback (`http`, loopback host, explicit port) |
+| `--oidc-issuer` | `MCP_AIRLOCK_OIDC_ISSUER` | | Issuer your client ID is registered with; discovery must find exactly this one |
+| `--oidc-discovery-url` | `MCP_AIRLOCK_OIDC_DISCOVERY_URL` | | Authorization server metadata URL (skips discovery from the MCP server) |
+| `--kc-auth-url`, `--kc-token-url`, `--kc-par-url` | `MCP_AIRLOCK_KC_AUTH_URL`, `…_KC_TOKEN_URL`, `…_KC_PAR_URL` | | Endpoint overrides (no discovery when all three are set) |
+| `--oidc-offline-access` | `MCP_AIRLOCK_OIDC_OFFLINE_ACCESS` | off | Also request `offline_access` when the provider offers it |
+| `--auth-scheme` | `MCP_AIRLOCK_AUTH_SCHEME` | `bearer` | `Authorization` scheme (`bearer` or `dpop`); the DPoP proof is sent either way |
+| `--auth-timeout-secs` | `MCP_AIRLOCK_AUTH_TIMEOUT_SECS` | `300` | How long to wait for the browser login |
+| `--remote-sse-url` | `MCP_AIRLOCK_REMOTE_SSE_URL` | the MCP URL | Standalone SSE endpoint of legacy servers |
+| `--mcp-protocol-version` | `MCP_AIRLOCK_MCP_PROTOCOL_VERSION` | `2025-11-25` | Fallback `MCP-Protocol-Version` when a message doesn't determine it |
+| `--allow-insecure-http` | `MCP_AIRLOCK_ALLOW_INSECURE_HTTP` | off | Allow `http://` on non-loopback hosts (development only) |
+| `--user-id` | `MCP_AIRLOCK_USER_ID` | `default_user` | Name the credentials are stored under in the keychain |
+| `--template-dir` | `MCP_AIRLOCK_TEMPLATE_DIR` | | Custom `success.html` / `failure.html` for the login callback |
+| `--log-level` | `MCP_AIRLOCK_LOG_LEVEL` | `info` | `error`, `warn`, `info`, `debug` or `trace` (`RUST_LOG` also works) |
+| `--log-dir` | `MCP_AIRLOCK_LOG_DIR` | per-user state dir | Where `mcp-airlock.log` is written |
 
 The authorization server is chosen in this order: the three endpoint overrides, then `--oidc-discovery-url`, then dynamic discovery from the MCP server.
 
-`MCP_PASSPORT_USE_MEMORY_VAULT=1` keeps credentials in memory only, for headless machines without a keychain. `MCP_PASSPORT_SKIP_OPEN_BROWSER=1` only prints the login URL.
+`MCP_AIRLOCK_USE_MEMORY_VAULT=1` keeps credentials in memory only, for headless machines without a keychain. `MCP_AIRLOCK_SKIP_OPEN_BROWSER=1` only prints the login URL.
 
 ## Keycloak
 
@@ -171,7 +171,7 @@ Tested with **Keycloak 26.8.0** (see [`keycloak-realm.json`](keycloak-realm.json
 - Public client with standard flow. Enable *Pushed authorization request required*, PKCE `S256` and *OAuth 2.0 DPoP Bound Access Tokens*.
 - Keycloak ignores the RFC 8707 `resource` parameter and only lets the token's audience introspect it. If your MCP server validates tokens by introspection, add an **audience mapper** for the server's client.
 - Define the scopes your server challenges for (e.g. `mcp:tools`, `mcp:admin`) as optional client scopes.
-- Keycloak lists `offline_access` even for clients that may not use it, so `mcp-passport` only requests it with `--oidc-offline-access`.
+- Keycloak lists `offline_access` even for clients that may not use it, so `mcp-airlock` only requests it with `--oidc-offline-access`.
 
 ## Security model
 

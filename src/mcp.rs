@@ -1,6 +1,6 @@
 //! # MCP protocol eras and Streamable HTTP request metadata
 //!
-//! mcp-passport forwards whatever the stdio client speaks:
+//! mcp-airlock forwards whatever the stdio client speaks:
 //!
 //! - **Modern** (2026-07-28 and later): every request carries its protocol
 //!   version in `_meta`; there is no `initialize`, no session and no GET stream.

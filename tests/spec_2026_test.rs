@@ -5,7 +5,7 @@ mod common;
 
 use common::mcp_server::{self, ServerOptions, LEGACY, MODERN};
 use common::{config, modern, StdioClient};
-use mcp_passport::vault::Vault;
+use mcp_airlock::vault::Vault;
 use serde_json::{json, Value};
 use std::time::Duration;
 

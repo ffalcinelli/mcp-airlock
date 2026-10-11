@@ -1,7 +1,7 @@
 //! # Configuration
 //!
-//! Every option is a CLI flag and an `MCP_PASSPORT_*` environment variable
-//! (flags win). See `mcp-passport --help`.
+//! Every option is a CLI flag and an `MCP_AIRLOCK_*` environment variable
+//! (flags win). See `mcp-airlock --help`.
 
 use clap::{Parser, ValueEnum};
 
@@ -16,14 +16,14 @@ pub enum AuthScheme {
     Dpop,
 }
 
-/// mcp-passport's configuration.
+/// mcp-airlock's configuration.
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about, long_about = None)]
 pub struct Config {
     /// Remote MCP endpoint (the Streamable HTTP URL of the server)
     #[arg(
         long,
-        env = "MCP_PASSPORT_REMOTE_MCP_URL",
+        env = "MCP_AIRLOCK_REMOTE_MCP_URL",
         help_heading = "Server Configuration"
     )]
     pub remote_mcp_url: String,
@@ -31,7 +31,7 @@ pub struct Config {
     /// Standalone SSE endpoint of legacy (2025-11-25 and earlier) servers [default: --remote-mcp-url]
     #[arg(
         long,
-        env = "MCP_PASSPORT_REMOTE_SSE_URL",
+        env = "MCP_AIRLOCK_REMOTE_SSE_URL",
         help_heading = "Server Configuration"
     )]
     pub remote_sse_url: Option<String>,
@@ -39,7 +39,7 @@ pub struct Config {
     /// Fallback MCP-Protocol-Version, used only when a message doesn't determine its version
     #[arg(
         long,
-        env = "MCP_PASSPORT_MCP_PROTOCOL_VERSION",
+        env = "MCP_AIRLOCK_MCP_PROTOCOL_VERSION",
         default_value = "2025-11-25",
         help_heading = "Server Configuration"
     )]
@@ -48,7 +48,7 @@ pub struct Config {
     /// Authorization header scheme; the DPoP proof header is sent either way
     #[arg(
         long,
-        env = "MCP_PASSPORT_AUTH_SCHEME",
+        env = "MCP_AIRLOCK_AUTH_SCHEME",
         value_enum,
         default_value_t = AuthScheme::Bearer,
         help_heading = "Server Configuration"
@@ -58,7 +58,7 @@ pub struct Config {
     /// Authorization server metadata URL (skips discovery from the MCP server)
     #[arg(
         long,
-        env = "MCP_PASSPORT_OIDC_DISCOVERY_URL",
+        env = "MCP_AIRLOCK_OIDC_DISCOVERY_URL",
         help_heading = "OIDC Configuration"
     )]
     pub oidc_discovery_url: Option<String>,
@@ -66,7 +66,7 @@ pub struct Config {
     /// Authorization endpoint override
     #[arg(
         long,
-        env = "MCP_PASSPORT_KC_AUTH_URL",
+        env = "MCP_AIRLOCK_KC_AUTH_URL",
         help_heading = "OIDC Configuration"
     )]
     pub kc_auth_url: Option<String>,
@@ -74,7 +74,7 @@ pub struct Config {
     /// Token endpoint override
     #[arg(
         long,
-        env = "MCP_PASSPORT_KC_TOKEN_URL",
+        env = "MCP_AIRLOCK_KC_TOKEN_URL",
         help_heading = "OIDC Configuration"
     )]
     pub kc_token_url: Option<String>,
@@ -82,7 +82,7 @@ pub struct Config {
     /// Pushed Authorization Request (PAR) endpoint override
     #[arg(
         long,
-        env = "MCP_PASSPORT_KC_PAR_URL",
+        env = "MCP_AIRLOCK_KC_PAR_URL",
         help_heading = "OIDC Configuration"
     )]
     pub kc_par_url: Option<String>,
@@ -90,7 +90,7 @@ pub struct Config {
     /// Expected issuer of the authorization server the client ID is registered with
     #[arg(
         long,
-        env = "MCP_PASSPORT_OIDC_ISSUER",
+        env = "MCP_AIRLOCK_OIDC_ISSUER",
         help_heading = "OIDC Configuration"
     )]
     pub oidc_issuer: Option<String>,
@@ -98,7 +98,7 @@ pub struct Config {
     /// Request the offline_access scope (long-lived refresh tokens) when the provider offers it
     #[arg(
         long,
-        env = "MCP_PASSPORT_OIDC_OFFLINE_ACCESS",
+        env = "MCP_AIRLOCK_OIDC_OFFLINE_ACCESS",
         help_heading = "OIDC Configuration"
     )]
     pub oidc_offline_access: bool,
@@ -106,8 +106,8 @@ pub struct Config {
     /// OIDC Client ID (a pre-registered ID, or an https URL of a Client ID Metadata Document)
     #[arg(
         long,
-        env = "MCP_PASSPORT_OIDC_CLIENT_ID",
-        default_value = "mcp-passport",
+        env = "MCP_AIRLOCK_OIDC_CLIENT_ID",
+        default_value = "mcp-airlock",
         help_heading = "OIDC Configuration"
     )]
     pub oidc_client_id: String,
@@ -115,7 +115,7 @@ pub struct Config {
     /// Loopback redirect URL for the login callback (must be registered with the provider)
     #[arg(
         long,
-        env = "MCP_PASSPORT_OIDC_REDIRECT_URL",
+        env = "MCP_AIRLOCK_OIDC_REDIRECT_URL",
         default_value = "http://127.0.0.1:8082/callback",
         help_heading = "Local State"
     )]
@@ -124,7 +124,7 @@ pub struct Config {
     /// Name under which credentials are stored in the OS keychain
     #[arg(
         long,
-        env = "MCP_PASSPORT_USER_ID",
+        env = "MCP_AIRLOCK_USER_ID",
         default_value = "default_user",
         help_heading = "Local State"
     )]
@@ -133,7 +133,7 @@ pub struct Config {
     /// Seconds to wait for the browser login to complete before giving up
     #[arg(
         long,
-        env = "MCP_PASSPORT_AUTH_TIMEOUT_SECS",
+        env = "MCP_AIRLOCK_AUTH_TIMEOUT_SECS",
         default_value_t = 300,
         value_parser = clap::value_parser!(u64).range(1..),
         help_heading = "Local State"
@@ -141,26 +141,26 @@ pub struct Config {
     pub auth_timeout_secs: u64,
 
     /// Directory containing success.html and failure.html for the auth callback
-    #[arg(long, env = "MCP_PASSPORT_TEMPLATE_DIR", help_heading = "Local State")]
+    #[arg(long, env = "MCP_AIRLOCK_TEMPLATE_DIR", help_heading = "Local State")]
     pub template_dir: Option<std::path::PathBuf>,
 
     /// Log level (error, warn, info, debug, trace)
     #[arg(
         long,
-        env = "MCP_PASSPORT_LOG_LEVEL",
+        env = "MCP_AIRLOCK_LOG_LEVEL",
         default_value = "info",
         help_heading = "Logging"
     )]
     pub log_level: String,
 
-    /// Directory for logs [default: per-user state directory, e.g. ~/.local/state/mcp-passport/logs]
-    #[arg(long, env = "MCP_PASSPORT_LOG_DIR", help_heading = "Logging")]
+    /// Directory for logs [default: per-user state directory, e.g. ~/.local/state/mcp-airlock/logs]
+    #[arg(long, env = "MCP_AIRLOCK_LOG_DIR", help_heading = "Logging")]
     pub log_dir: Option<std::path::PathBuf>,
 
     /// Allow plain-HTTP MCP and authorization server URLs on non-loopback hosts (insecure)
     #[arg(
         long,
-        env = "MCP_PASSPORT_ALLOW_INSECURE_HTTP",
+        env = "MCP_AIRLOCK_ALLOW_INSECURE_HTTP",
         help_heading = "Server Configuration"
     )]
     pub allow_insecure_http: bool,
@@ -178,13 +178,13 @@ impl Config {
     }
 }
 
-/// `$XDG_STATE_HOME/mcp-passport/logs` on Linux, the local data directory on
+/// `$XDG_STATE_HOME/mcp-airlock/logs` on Linux, the local data directory on
 /// macOS and Windows, and a per-user temp directory as a last resort.
 pub fn default_log_dir() -> std::path::PathBuf {
     dirs::state_dir()
         .or_else(dirs::data_local_dir)
-        .map(|d| d.join("mcp-passport").join("logs"))
-        .unwrap_or_else(|| std::env::temp_dir().join("mcp-passport"))
+        .map(|d| d.join("mcp-airlock").join("logs"))
+        .unwrap_or_else(|| std::env::temp_dir().join("mcp-airlock"))
 }
 
 #[cfg(test)]
@@ -194,7 +194,7 @@ mod tests {
     #[test]
     fn test_config_parsing_minimal() {
         let args = vec![
-            "mcp-passport",
+            "mcp-airlock",
             "--remote-mcp-url",
             "http://mcp/rpc",
             "--remote-sse-url",
@@ -208,7 +208,7 @@ mod tests {
             config.oidc_discovery_url,
             Some("http://kc/discovery".to_string())
         );
-        assert_eq!(config.oidc_client_id, "mcp-passport");
+        assert_eq!(config.oidc_client_id, "mcp-airlock");
         assert_eq!(config.user_id, "default_user");
         assert_eq!(config.mcp_protocol_version, "2025-11-25");
         assert_eq!(config.auth_timeout_secs, 300);
@@ -217,7 +217,7 @@ mod tests {
     #[test]
     fn test_config_auth_timeout() {
         let base = [
-            "mcp-passport",
+            "mcp-airlock",
             "--remote-mcp-url",
             "http://mcp/rpc",
             "--remote-sse-url",
@@ -234,7 +234,7 @@ mod tests {
     #[test]
     fn test_config_parsing_full() {
         let args = vec![
-            "mcp-passport",
+            "mcp-airlock",
             "--remote-mcp-url",
             "http://mcp/rpc",
             "--remote-sse-url",
@@ -261,7 +261,7 @@ mod tests {
 
     #[test]
     fn test_config_missing_required() {
-        let args = vec!["mcp-passport"];
+        let args = vec!["mcp-airlock"];
         let result = Config::try_parse_from(args);
         assert!(result.is_err());
         assert_eq!(
@@ -273,7 +273,7 @@ mod tests {
     #[test]
     fn test_config_invalid_enum_value() {
         let args = vec![
-            "mcp-passport",
+            "mcp-airlock",
             "--remote-mcp-url",
             "http://mcp/rpc",
             "--remote-sse-url",
@@ -292,7 +292,7 @@ mod tests {
     #[test]
     fn test_config_unknown_argument() {
         let args = vec![
-            "mcp-passport",
+            "mcp-airlock",
             "--remote-mcp-url",
             "http://mcp/rpc",
             "--remote-sse-url",
@@ -311,7 +311,7 @@ mod tests {
     #[test]
     fn test_config_missing_value() {
         let args = vec![
-            "mcp-passport",
+            "mcp-airlock",
             "--remote-mcp-url",
             "http://mcp/rpc",
             "--remote-sse-url",

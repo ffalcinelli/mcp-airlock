@@ -1,10 +1,10 @@
 use clap::Parser;
-use mcp_passport::config::Config;
+use mcp_airlock::config::Config;
 
 #[test]
 fn test_cli_parsing() {
     let args = vec![
-        "mcp-passport",
+        "mcp-airlock",
         "--remote-mcp-url",
         "http://localhost:8080",
         "--remote-sse-url",
@@ -24,7 +24,7 @@ fn test_cli_parsing() {
 
 #[test]
 fn test_cli_parsing_missing_arg() {
-    let args = vec!["mcp-passport"];
+    let args = vec!["mcp-airlock"];
     let result = Config::try_parse_from(args);
     assert!(result.is_err());
 }

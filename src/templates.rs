@@ -85,7 +85,7 @@ pub const DEFAULT_SUCCESS_HTML: &str = r#"<!DOCTYPE html>
             </svg>
         </div>
         <h1>Authentication Successful</h1>
-        <p>You have successfully authenticated with <strong>mcp-passport</strong>. You can now close this tab and return to your application.</p>
+        <p>You have successfully authenticated with <strong>mcp-airlock</strong>. You can now close this tab and return to your application.</p>
         
         <div class="context-info">
             <div class="context-item">

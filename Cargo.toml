@@ -1,17 +1,18 @@
 [package]
-name = "mcp-passport"
+name = "mcp-airlock"
 version = "0.0.1"
 edition = "2021"
 rust-version = "1.88"
 authors = ["Fabio Falcinelli <fabio.falcinelli@gmail.com>"]
 description = "Secure 1:1 transparent Layer 7 proxy for the Model Context Protocol (MCP)"
 readme = "README.md"
-homepage = "https://ffalcinelli.github.io/mcp-passport/"
-documentation = "https://ffalcinelli.github.io/mcp-passport/latest/mcp_passport/"
-repository = "https://github.com/ffalcinelli/mcp-passport"
+homepage = "https://ffalcinelli.github.io/mcp-airlock/"
+documentation = "https://ffalcinelli.github.io/mcp-airlock/latest/mcp_airlock/"
+repository = "https://github.com/ffalcinelli/mcp-airlock"
 license = "MIT"
 keywords = ["mcp", "proxy", "oidc", "fapi", "security"]
 categories = ["network-programming", "cryptography"]
+include = ["/src", "/benches", "/Cargo.toml", "/Cargo.lock", "/README.md", "/LICENSE", "/CHANGELOG.md"]
 
 [dependencies]
 # Async Runtime
@@ -23,7 +24,9 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
 # Networking & SSE
-reqwest = { version = "0.12", features = ["json", "stream"] }
+# rustls (with the OS trust store) instead of native-tls: no system OpenSSL, so the
+# release binaries cross-compile, and private CAs configured on the host still work.
+reqwest = { version = "0.12", default-features = false, features = ["json", "stream", "rustls-tls-native-roots", "charset", "http2", "macos-system-configuration"] }
 reqwest-eventsource = "0.6"
 eventsource-stream = "0.2"
 url = "2.5"

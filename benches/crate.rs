@@ -1,8 +1,8 @@
-//! Benchmarks of the per-request hot paths of mcp-passport.
+//! Benchmarks of the per-request hot paths of mcp-airlock.
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use mcp_passport::crypto::DpopKey;
-use mcp_passport::vault::Vault;
+use mcp_airlock::crypto::DpopKey;
+use mcp_airlock::vault::Vault;
 use std::hint::black_box;
 
 const HTU: &str = "https://mcp.example.com/mcp";

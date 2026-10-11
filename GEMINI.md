@@ -1,7 +1,7 @@
-# Agent context: mcp-passport
+# Agent context: mcp-airlock
 
 ## Project Overview
-`mcp-passport` is a high-performance, secure Layer 7 proxy for the **Model Context Protocol (MCP)**. It acts as a dedicated bridge between an AI client (e.g., Claude Desktop, Gemini CLI) communicating via `stdio` and a remote MCP server over HTTPS.
+`mcp-airlock` is a high-performance, secure Layer 7 proxy for the **Model Context Protocol (MCP)**. It acts as a dedicated bridge between an AI client (e.g., Claude Desktop, Gemini CLI) communicating via `stdio` and a remote MCP server over HTTPS.
 
 The project is built on five core architectural pillars:
 1. **Transparent L7 Bridge**: 1:1 multiplexing of JSON-RPC over `stdio` ↔ HTTP, including persistent SSE piping for server-originated notifications.
@@ -50,7 +50,7 @@ The project is built on five core architectural pillars:
 - **Everything fast**: `./run_tests.sh` (fmt, clippy, `cargo test`); `./run_tests.sh --docker` adds the end-to-end suites.
 - **Spec conformance**: `cargo test --test spec_2026_test`
 - **Keycloak E2E**: `cargo test --test keycloak_2026_e2e_test -- --ignored --nocapture`
-- **Coverage**: `cargo tarpaulin --out Xml --verbose` (integrated with [Codecov](https://app.codecov.io/gh/ffalcinelli/mcp-passport))
+- **Coverage**: `cargo tarpaulin --out Xml --verbose` (integrated with [Codecov](https://app.codecov.io/gh/ffalcinelli/mcp-airlock))
 - **MSRV**: Rust 1.88 (`rust-version` in `Cargo.toml`, checked in CI).
 
 ## Docs

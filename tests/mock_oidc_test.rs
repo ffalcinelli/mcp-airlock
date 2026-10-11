@@ -1,11 +1,11 @@
 use anyhow::Context;
 use axum::{http::HeaderMap, response::IntoResponse, routing::get, routing::post, Router};
-use mcp_passport::auth::AuthManager;
-use mcp_passport::auth::OidcConfig;
-use mcp_passport::config::AuthScheme;
-use mcp_passport::crypto::DpopKey;
-use mcp_passport::proxy::Proxy;
-use mcp_passport::vault::Vault;
+use mcp_airlock::auth::AuthManager;
+use mcp_airlock::auth::OidcConfig;
+use mcp_airlock::config::AuthScheme;
+use mcp_airlock::crypto::DpopKey;
+use mcp_airlock::proxy::Proxy;
+use mcp_airlock::vault::Vault;
 use serde_json::json;
 use std::sync::Arc;
 use std::time::Duration;
@@ -14,7 +14,7 @@ use tokio::time::timeout;
 
 #[tokio::test]
 async fn test_sse_piping_flow() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-sse-v3";
+    let test_svc = "mcp-airlock-test-sse-v3";
     use axum::response::sse::{Event, Sse};
     use futures::stream;
 
@@ -73,7 +73,7 @@ async fn test_sse_piping_flow() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_reauth_loop_reset_on_failure() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-loop-v4";
+    let test_svc = "mcp-airlock-test-loop-v4";
     let vault = Vault::in_memory(test_svc);
 
     let mcp_app = Router::new().route(
@@ -146,7 +146,7 @@ async fn test_reauth_loop_reset_on_failure() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_discovery_url_construction() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-discovery-v1";
+    let test_svc = "mcp-airlock-test-discovery-v1";
     let vault = Vault::in_memory(test_svc);
 
     let mcp_app = Router::new()
@@ -232,7 +232,7 @@ async fn test_discovery_url_construction() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_concurrent_reauth_regression() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-regression-v1";
+    let test_svc = "mcp-airlock-regression-v1";
     let user = "reg_user";
     let vault = Vault::in_memory(test_svc);
 
@@ -331,7 +331,7 @@ async fn test_concurrent_reauth_regression() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_max_retries_exhaustion() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-max-retries";
+    let test_svc = "mcp-airlock-test-max-retries";
     let user = "retry_user";
     let vault = Vault::in_memory(test_svc);
 
@@ -387,7 +387,7 @@ async fn test_max_retries_exhaustion() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_sse_401_reauth_trigger() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-sse-401";
+    let test_svc = "mcp-airlock-test-sse-401";
     let user = "sse_401_user";
     let vault = Vault::in_memory(test_svc);
 
@@ -527,7 +527,7 @@ async fn test_par_failure_handling() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_403_step_up_trigger() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-403";
+    let test_svc = "mcp-airlock-test-403";
     let user = "stepup_user";
     let vault = Vault::in_memory(test_svc);
     vault.store_token(user, "valid_but_low_scope")?;
@@ -605,7 +605,7 @@ async fn test_403_step_up_trigger() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_sse_non_401_error() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-sse-err";
+    let test_svc = "mcp-airlock-test-sse-err";
     let user = "sse_err_user";
     let vault = Vault::in_memory(test_svc);
     vault.store_token(user, "t")?;
@@ -648,7 +648,7 @@ async fn test_sse_non_401_error() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_redundant_reauth_skip() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-redundant";
+    let test_svc = "mcp-airlock-test-redundant";
     let user = "redundant_user";
     let vault = Vault::in_memory(test_svc);
 
@@ -707,7 +707,7 @@ async fn test_redundant_reauth_skip() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_proxy_no_content_and_session_id() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-nocontent";
+    let test_svc = "mcp-airlock-test-nocontent";
     let user = "nocontent_user";
     let vault = Vault::in_memory(test_svc);
     vault.store_token(user, "valid_token")?;
@@ -765,7 +765,7 @@ async fn test_proxy_no_content_and_session_id() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_proxy_reauth_timeout() -> anyhow::Result<()> {
-    let test_svc = "mcp-passport-test-timeout";
+    let test_svc = "mcp-airlock-test-timeout";
     let user = "timeout_user";
     let vault = Vault::in_memory(test_svc);
 
@@ -822,7 +822,7 @@ async fn test_proxy_reauth_timeout() -> anyhow::Result<()> {
 #[tokio::test]
 async fn test_lib_run_minimal() -> anyhow::Result<()> {
     use clap::Parser;
-    use mcp_passport::config::Config;
+    use mcp_airlock::config::Config;
     use tokio::io::AsyncWriteExt;
 
     let mcp_app = Router::new().route(
@@ -837,12 +837,12 @@ async fn test_lib_run_minimal() -> anyhow::Result<()> {
     });
 
     // Pre-populate vault to skip OIDC
-    let vault = Vault::in_memory("mcp-passport-test-run");
+    let vault = Vault::in_memory("mcp-airlock-test-run");
     vault.store_token("run_user", "valid")?;
     vault.store_dpop_key("run_user", &DpopKey::generate().to_bytes())?;
 
     let config = Config::try_parse_from(vec![
-        "mcp-passport",
+        "mcp-airlock",
         "--remote-mcp-url",
         &rpc_url,
         "--remote-sse-url",
@@ -859,7 +859,7 @@ async fn test_lib_run_minimal() -> anyhow::Result<()> {
     let (mut client_in_tx, server_in_rx) = tokio::io::duplex(1024);
 
     let run_handle = tokio::spawn(async move {
-        mcp_passport::run_with_vault(config, vault, server_in_rx, server_out_tx).await
+        mcp_airlock::run_with_vault(config, vault, server_in_rx, server_out_tx).await
     });
 
     client_in_tx
