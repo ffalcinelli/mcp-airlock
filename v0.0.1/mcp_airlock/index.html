@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="mcp-airlock"><title>mcp_airlock - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="mcp_airlock" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.0 (b940084d7 2026-09-28)" data-channel="1.99.0" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../static.files/storage-41dd4d93.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-044be391.svg"><style>
+#version-selector {
+    padding: 10px 15px;
+    border-bottom: 1px solid #454545;
+    margin-bottom: 10px;
+    font-size: 0.85em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#version-selector label {
+    color: #888;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+#version-selector select {
+    background: #353535;
+    color: #eee;
+    border: 1px solid #454545;
+    border-radius: 4px;
+    padding: 2px 5px;
+    cursor: pointer;
+    outline: none;
+    flex-grow: 1;
+    max-width: 120px;
+}
+#version-selector select:hover {
+    border-color: #666;
+}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var pathParts = window.location.pathname.split("/");
+    var versionIndex = -1;
+    
+    // Find the version segment (latest or vX.Y.Z)
+    for (var i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === "latest" || pathParts[i].match(/^v\d+/)) {
+            versionIndex = i;
+            break;
+        }
+    }
+
+    if (versionIndex === -1) return;
+
+    var currentVersion = pathParts[versionIndex];
+    // Ensure rootPath is absolute (starts with /)
+    var rootPath = "/" + pathParts.slice(1, versionIndex).join("/") + "/";
+    // Clean up double slashes if version is at the absolute root
+    rootPath = rootPath.replace(/\/+$/, "/");
+    
+    fetch(rootPath + "versions.json")
+        .then(response => response.json())
+        .then(versions => {
+            var selectorDiv = document.createElement("div");
+            selectorDiv.id = "version-selector";
+            
+            var label = document.createElement("label");
+            label.innerHTML = "Version: ";
+            selectorDiv.appendChild(label);
+            
+            var select = document.createElement("select");
+            versions.forEach(function(v) {
+                var option = document.createElement("option");
+                option.value = v;
+                option.text = v;
+                if (v === currentVersion) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+            
+            select.onchange = function() {
+                var newVersion = this.value;
+                var currentPath = pathParts.slice(versionIndex + 1).join("/");
+                window.location.href = rootPath + newVersion + "/" + currentPath;
+            };
+            
+            selectorDiv.appendChild(select);
+            
+            function injectSelector() {
+                var sidebarCrate = document.querySelector(".sidebar .location") || document.querySelector(".sidebar-elems .location");
+                if (sidebarCrate) {
+                    sidebarCrate.after(selectorDiv);
+                    return true;
+                }
+                return false;
+            }
+
+            if (!injectSelector()) {
+                var sidebar = document.querySelector(".sidebar");
+                if (sidebar) {
+                    sidebar.prepend(selectorDiv);
+                } else {
+                    document.body.insertBefore(selectorDiv, document.body.firstChild);
+                }
+            }
+        })
+        .catch(err => console.error("Could not load versions.json", err));
+});
+</script>
+
+</head><body class="rustdoc mod crate"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Crate mcp_airlock</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../mcp_airlock/index.html">mcp_<wbr>airlock</a><span class="version">0.0.1</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section id="rustdoc-toc"><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#mcp-airlock" title="mcp-airlock">mcp-airlock</a><ul><li><a href="#how-it-works" title="How it works">How it works</a></li><li><a href="#modules" title="Modules">Modules</a></li><li><a href="#running-the-bridge" title="Running the bridge">Running the bridge</a></li><li><a href="#sending-a-single-request" title="Sending a single request">Sending a single request</a></li></ul></li></ul><h3><a href="#modules-1">Crate Items</a></h3><ul class="block"><li><a href="#modules-1" title="Modules">Modules</a></li><li><a href="#functions" title="Functions">Functions</a></li><li><a href="#types" title="Type Aliases">Type Aliases</a></li></ul></section><div id="rustdoc-modnav"></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1>Crate <span>mcp_<wbr>airlock</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../src/mcp_airlock/lib.rs.html#1-828">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="mcp-airlock"><a class="doc-anchor" href="#mcp-airlock">§</a>mcp-airlock</h2>
+<p>A local <strong>stdio ⇄ Streamable HTTP bridge</strong> for the <a href="https://modelcontextprotocol.io">Model Context
+Protocol</a>. It lets AI clients that launch
+local MCP servers talk to remote, OAuth-protected MCP servers, with FAPI 2.0
+security: Pushed Authorization Requests, PKCE and DPoP-bound tokens.</p>
+<p>Most people use the <code>mcp-airlock</code> binary (see the
+<a href="https://github.com/ffalcinelli/mcp-airlock#readme">README</a> and the
+<a href="https://github.com/ffalcinelli/mcp-airlock/blob/main/GUIDE.md">setup guide</a>).
+This crate exposes the same machinery as a library.</p>
+<h3 id="how-it-works"><a class="doc-anchor" href="#how-it-works">§</a>How it works</h3>
+<ol>
+<li>Each JSON-RPC message read from stdin is POSTed to the MCP server, with
+the headers of its protocol era. Modern (2026-07-28) messages carry
+<code>MCP-Protocol-Version</code>, <code>Mcp-Method</code>, <code>Mcp-Name</code> and <code>Mcp-Param-*</code>;
+legacy (<code>initialize</code>-based) ones carry the negotiated version and the
+session id.</li>
+<li>A <code>401</code> or <code>403 insufficient_scope</code> activates the <em>airlock</em>: requests
+pause while the token is refreshed or, if needed, a browser login runs:
+RFC 9728 → RFC 8414 discovery, PAR with PKCE and <code>dpop_jkt</code>, <code>iss</code>
+validation, and a DPoP-bound code exchange.</li>
+<li>The request is retried. The response (JSON, or each event of an SSE
+stream) is written to stdout. Failures become JSON-RPC errors, never
+silence.</li>
+</ol>
+<h3 id="modules"><a class="doc-anchor" href="#modules">§</a>Modules</h3>
+<ul>
+<li><a href="proxy/index.html" title="mod mcp_airlock::proxy"><code>proxy</code></a>: the <a href="proxy/struct.Proxy.html" title="struct mcp_airlock::proxy::Proxy"><code>Proxy</code></a> engine (Streamable HTTP, airlock,
+DPoP, refresh).</li>
+<li><a href="auth/index.html" title="mod mcp_airlock::auth"><code>auth</code></a>: <a href="auth/struct.AuthManager.html" title="struct mcp_airlock::auth::AuthManager"><code>AuthManager</code></a>, the OAuth flows, and
+<a href="auth/struct.OidcConfig.html" title="struct mcp_airlock::auth::OidcConfig"><code>OidcConfig</code></a>.</li>
+<li><a href="vault/index.html" title="mod mcp_airlock::vault"><code>vault</code></a>: credential storage in the OS keychain or in memory.</li>
+<li><a href="crypto/index.html" title="mod mcp_airlock::crypto"><code>crypto</code></a>: DPoP keys and proofs.</li>
+<li><a href="config/index.html" title="mod mcp_airlock::config"><code>config</code></a>: CLI flags and environment variables.</li>
+<li><a href="logging/index.html" title="mod mcp_airlock::logging"><code>logging</code></a>: the private log directory.</li>
+<li><a href="templates/index.html" title="mod mcp_airlock::templates"><code>templates</code></a>: the default login result pages.</li>
+</ul>
+<h3 id="running-the-bridge"><a class="doc-anchor" href="#running-the-bridge">§</a>Running the bridge</h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>mcp_airlock::{config::Config, run_with_vault, vault::Vault};
+
+<span class="kw">let </span>config = &lt;Config <span class="kw">as </span>clap::Parser&gt;::try_parse_from([
+    <span class="string">"mcp-airlock"</span>,
+    <span class="string">"--remote-mcp-url"</span>,
+    <span class="string">"https://mcp.example.com/mcp"</span>,
+])<span class="question-mark">?</span>;
+<span class="comment">// `run` picks the OS keychain; here credentials stay in memory.
+</span><span class="kw">let </span>vault = Vault::in_memory(<span class="string">"example"</span>);
+run_with_vault(config, vault, tokio::io::stdin(), tokio::io::stdout()).<span class="kw">await</span></code></pre></div><h3 id="sending-a-single-request"><a class="doc-anchor" href="#sending-a-single-request">§</a>Sending a single request</h3>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>mcp_airlock::auth::OidcConfig;
+<span class="kw">use </span>mcp_airlock::config::AuthScheme;
+<span class="kw">use </span>mcp_airlock::proxy::Proxy;
+<span class="kw">use </span>mcp_airlock::vault::Vault;
+<span class="kw">use </span>serde_json::json;
+
+<span class="kw">let </span>proxy = Proxy::new(
+    <span class="string">"https://mcp.example.com/mcp"</span>,
+    <span class="string">"default_user"</span>,
+    OidcConfig {
+        client_id: <span class="string">"mcp-airlock"</span>.into(),
+        redirect_url: <span class="string">"http://127.0.0.1:8082/callback"</span>.into(),
+        ..Default::default()
+    },
+    Vault::keyring(<span class="kw-2">&amp;</span>mcp_airlock::vault::service_name_for(<span class="string">"https://mcp.example.com/mcp"</span>)),
+    <span class="string">"2025-11-25"</span>,
+    AuthScheme::Bearer,
+);
+<span class="kw">let </span>reply = proxy
+    .call(<span class="macro">json!</span>({
+        <span class="string">"jsonrpc"</span>: <span class="string">"2.0"</span>,
+        <span class="string">"id"</span>: <span class="number">1</span>,
+        <span class="string">"method"</span>: <span class="string">"tools/list"</span>,
+        <span class="string">"params"</span>: {<span class="string">"_meta"</span>: {
+            <span class="string">"io.modelcontextprotocol/protocolVersion"</span>: <span class="string">"2026-07-28"</span>,
+            <span class="string">"io.modelcontextprotocol/clientCapabilities"</span>: {}
+        }}
+    }))
+    .<span class="kw">await</span><span class="question-mark">?</span>;
+<span class="macro">println!</span>(<span class="string">"{reply:?}"</span>);</code></pre></div></div></details><h2 id="modules-1" class="section-header">Modules<a href="#modules-1" class="anchor">§</a></h2><dl class="item-table"><dt><a class="mod" href="auth/index.html" title="mod mcp_airlock::auth">auth</a></dt><dd>OIDC/OAuth2 Authentication Manager</dd><dt><a class="mod" href="config/index.html" title="mod mcp_airlock::config">config</a></dt><dd>Configuration</dd><dt><a class="mod" href="crypto/index.html" title="mod mcp_airlock::crypto">crypto</a></dt><dd>DPoP Cryptographic Primitives</dd><dt><a class="mod" href="logging/index.html" title="mod mcp_airlock::logging">logging</a></dt><dd>Log directory setup</dd><dt><a class="mod" href="proxy/index.html" title="mod mcp_airlock::proxy">proxy</a></dt><dd>Transparent Layer 7 Bridge (Airlock)</dd><dt><a class="mod" href="templates/index.html" title="mod mcp_airlock::templates">templates</a></dt><dd>Default pages shown in the browser after the login callback. Override them
+with <code>--template-dir</code>; <code>{{ISSUER_NAME}}</code>, <code>{{RESOURCE_NAME}}</code> and (failure
+only) <code>{{ERROR_MESSAGE}}</code> are replaced with HTML-escaped values.</dd><dt><a class="mod" href="vault/index.html" title="mod mcp_airlock::vault">vault</a></dt><dd>OS-Native Secure Vault</dd></dl><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.run.html" title="fn mcp_airlock::run">run</a></dt><dd>Runs the proxy using the vault backend selected by the environment
+(OS keychain unless <code>MCP_AIRLOCK_USE_MEMORY_VAULT</code> is set).</dd><dt><a class="fn" href="fn.run_with_vault.html" title="fn mcp_airlock::run_with_vault">run_<wbr>with_<wbr>vault</a></dt><dd>Runs the proxy with an explicit vault.</dd><dt><a class="fn" href="fn.validate_config.html" title="fn mcp_airlock::validate_config">validate_<wbr>config</a></dt><dd>Checks the URL policy before anything is sent over the network.</dd></dl><h2 id="types" class="section-header">Type Aliases<a href="#types" class="anchor">§</a></h2><dl class="item-table"><dt><a class="type" href="type.Result.html" title="type mcp_airlock::Result">Result</a></dt><dd>Shared result type for the crate.</dd></dl></section></div></main></body></html>
