@@ -12,8 +12,8 @@ use crate::Result;
 use anyhow::Context;
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use p256::ecdsa::{signature::Signer, SigningKey, VerifyingKey};
+use p256::elliptic_curve::Generate;
 use p256::SecretKey;
-use rand_core::OsRng;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -42,7 +42,7 @@ struct DpopClaims {
 impl DpopKey {
     /// Generates a new ephemeral DPoP keypair.
     pub fn generate() -> Self {
-        let signing_key = SigningKey::random(&mut OsRng);
+        let signing_key = SigningKey::generate();
         Self { signing_key }
     }
 
@@ -61,7 +61,7 @@ impl DpopKey {
     /// Constructs the public JWK representation.
     pub fn public_jwk(&self) -> Result<Value> {
         let verifying_key = VerifyingKey::from(&self.signing_key);
-        let encoded_point = verifying_key.to_encoded_point(false);
+        let encoded_point = verifying_key.to_sec1_point(false);
 
         Ok(json!({
             "kty": "EC",
