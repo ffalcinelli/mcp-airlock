@@ -330,8 +330,8 @@ fn verify_dpop_proof(
         let array: [u8; 32] = bytes.try_into().map_err(|_| "bad coordinate".to_string())?;
         Ok(array.into())
     };
-    let point = p256::EncodedPoint::from_affine_coordinates(&coord(x)?, &coord(y)?, false);
-    let key = p256::ecdsa::VerifyingKey::from_encoded_point(&point).map_err(|e| e.to_string())?;
+    let point = p256::Sec1Point::from_affine_coordinates(&coord(x)?, &coord(y)?, false);
+    let key = p256::ecdsa::VerifyingKey::from_sec1_point(&point).map_err(|e| e.to_string())?;
     let sig = URL_SAFE_NO_PAD
         .decode(parts[2])
         .map_err(|e| e.to_string())?;
