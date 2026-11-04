@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="OIDC/OAuth2 Authentication Manager"><title>mcp_airlock::auth - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="mcp_airlock" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.0 (b940084d7 2026-09-28)" data-channel="1.99.0" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"><style>
+#version-selector {
+    padding: 10px 15px;
+    border-bottom: 1px solid #454545;
+    margin-bottom: 10px;
+    font-size: 0.85em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#version-selector label {
+    color: #888;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+#version-selector select {
+    background: #353535;
+    color: #eee;
+    border: 1px solid #454545;
+    border-radius: 4px;
+    padding: 2px 5px;
+    cursor: pointer;
+    outline: none;
+    flex-grow: 1;
+    max-width: 120px;
+}
+#version-selector select:hover {
+    border-color: #666;
+}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var pathParts = window.location.pathname.split("/");
+    var versionIndex = -1;
+    
+    // Find the version segment (latest or vX.Y.Z)
+    for (var i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === "latest" || pathParts[i].match(/^v\d+/)) {
+            versionIndex = i;
+            break;
+        }
+    }
+
+    if (versionIndex === -1) return;
+
+    var currentVersion = pathParts[versionIndex];
+    // Ensure rootPath is absolute (starts with /)
+    var rootPath = "/" + pathParts.slice(1, versionIndex).join("/") + "/";
+    // Clean up double slashes if version is at the absolute root
+    rootPath = rootPath.replace(/\/+$/, "/");
+    
+    fetch(rootPath + "versions.json")
+        .then(response => response.json())
+        .then(versions => {
+            var selectorDiv = document.createElement("div");
+            selectorDiv.id = "version-selector";
+            
+            var label = document.createElement("label");
+            label.innerHTML = "Version: ";
+            selectorDiv.appendChild(label);
+            
+            var select = document.createElement("select");
+            versions.forEach(function(v) {
+                var option = document.createElement("option");
+                option.value = v;
+                option.text = v;
+                if (v === currentVersion) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+            
+            select.onchange = function() {
+                var newVersion = this.value;
+                var currentPath = pathParts.slice(versionIndex + 1).join("/");
+                window.location.href = rootPath + newVersion + "/" + currentPath;
+            };
+            
+            selectorDiv.appendChild(select);
+            
+            function injectSelector() {
+                var sidebarCrate = document.querySelector(".sidebar .location") || document.querySelector(".sidebar-elems .location");
+                if (sidebarCrate) {
+                    sidebarCrate.after(selectorDiv);
+                    return true;
+                }
+                return false;
+            }
+
+            if (!injectSelector()) {
+                var sidebar = document.querySelector(".sidebar");
+                if (sidebar) {
+                    sidebar.prepend(selectorDiv);
+                } else {
+                    document.body.insertBefore(selectorDiv, document.body.firstChild);
+                }
+            }
+        })
+        .catch(err => console.error("Could not load versions.json", err));
+});
+</script>
+
+</head><body class="rustdoc mod"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">Module auth</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../mcp_airlock/index.html">mcp_<wbr>airlock</a><span class="version">0.0.1</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module auth</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#oidcoauth2-authentication-manager" title="OIDC/OAuth2 Authentication Manager">OIDC/OAuth2 Authentication Manager</a></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate mcp_<wbr>airlock</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">mcp_airlock</a></div><h1>Module <span>auth</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/mcp_airlock/auth.rs.html#1-2058">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="oidcoauth2-authentication-manager"><a class="doc-anchor" href="#oidcoauth2-authentication-manager">§</a>OIDC/OAuth2 Authentication Manager</h2>
+<p>This module implements the OpenID Connect (OIDC) flow with FAPI 2.0 security
+enhancements, including:</p>
+<ul>
+<li><strong>Pushed Authorization Requests (PAR)</strong></li>
+<li><strong>PKCE</strong> (Proof Key for Code Exchange)</li>
+<li><strong>DPoP</strong> (Demonstrating Proof-of-Possession)</li>
+<li><strong>RFC 8707 Resource Indicators</strong></li>
+</ul>
+<p>It also includes a local loopback server to handle the OAuth2 callback.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.AuthManager.html" title="struct mcp_airlock::auth::AuthManager">Auth<wbr>Manager</a></dt><dd>Manages OIDC discovery, token exchange, and the DPoP flow.</dd><dt><a class="struct" href="struct.OidcConfig.html" title="struct mcp_airlock::auth::OidcConfig">Oidc<wbr>Config</a></dt><dd>Configuration for the OIDC provider and local callback server.</dd><dt><a class="struct" href="struct.Timeouts.html" title="struct mcp_airlock::auth::Timeouts">Timeouts</a></dt><dd>Timeouts and retry delays. <code>Default</code> holds the production values.</dd></dl></section></div></main></body></html>

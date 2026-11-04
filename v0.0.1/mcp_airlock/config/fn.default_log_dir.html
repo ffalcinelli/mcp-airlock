@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="`$XDG_STATE_HOME/mcp-airlock/logs` on Linux, the local data directory on macOS and Windows, and a per-user temp directory as a last resort."><title>default_log_dir in mcp_airlock::config - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-0c87338a.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="mcp_airlock" data-themes="" data-resource-suffix="" data-rustdoc-version="1.99.0 (b940084d7 2026-09-28)" data-channel="1.99.0" data-search-js="search-cf4fc35e.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-417ebf0a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"><style>
+#version-selector {
+    padding: 10px 15px;
+    border-bottom: 1px solid #454545;
+    margin-bottom: 10px;
+    font-size: 0.85em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#version-selector label {
+    color: #888;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+#version-selector select {
+    background: #353535;
+    color: #eee;
+    border: 1px solid #454545;
+    border-radius: 4px;
+    padding: 2px 5px;
+    cursor: pointer;
+    outline: none;
+    flex-grow: 1;
+    max-width: 120px;
+}
+#version-selector select:hover {
+    border-color: #666;
+}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var pathParts = window.location.pathname.split("/");
+    var versionIndex = -1;
+    
+    // Find the version segment (latest or vX.Y.Z)
+    for (var i = 0; i < pathParts.length; i++) {
+        if (pathParts[i] === "latest" || pathParts[i].match(/^v\d+/)) {
+            versionIndex = i;
+            break;
+        }
+    }
+
+    if (versionIndex === -1) return;
+
+    var currentVersion = pathParts[versionIndex];
+    // Ensure rootPath is absolute (starts with /)
+    var rootPath = "/" + pathParts.slice(1, versionIndex).join("/") + "/";
+    // Clean up double slashes if version is at the absolute root
+    rootPath = rootPath.replace(/\/+$/, "/");
+    
+    fetch(rootPath + "versions.json")
+        .then(response => response.json())
+        .then(versions => {
+            var selectorDiv = document.createElement("div");
+            selectorDiv.id = "version-selector";
+            
+            var label = document.createElement("label");
+            label.innerHTML = "Version: ";
+            selectorDiv.appendChild(label);
+            
+            var select = document.createElement("select");
+            versions.forEach(function(v) {
+                var option = document.createElement("option");
+                option.value = v;
+                option.text = v;
+                if (v === currentVersion) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+            
+            select.onchange = function() {
+                var newVersion = this.value;
+                var currentPath = pathParts.slice(versionIndex + 1).join("/");
+                window.location.href = rootPath + newVersion + "/" + currentPath;
+            };
+            
+            selectorDiv.appendChild(select);
+            
+            function injectSelector() {
+                var sidebarCrate = document.querySelector(".sidebar .location") || document.querySelector(".sidebar-elems .location");
+                if (sidebarCrate) {
+                    sidebarCrate.after(selectorDiv);
+                    return true;
+                }
+                return false;
+            }
+
+            if (!injectSelector()) {
+                var sidebar = document.querySelector(".sidebar");
+                if (sidebar) {
+                    sidebar.prepend(selectorDiv);
+                } else {
+                    document.body.insertBefore(selectorDiv, document.body.firstChild);
+                }
+            }
+        })
+        .catch(err => console.error("Could not load versions.json", err));
+});
+</script>
+
+</head><body class="rustdoc fn"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">default_log_dir</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../mcp_airlock/index.html">mcp_<wbr>airlock</a><span class="version">0.0.1</span></h2></div><div class="sidebar-elems"><div id="rustdoc-modnav"><h2><a href="index.html">In mcp_<wbr>airlock::<wbr>config</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">mcp_airlock</a>::<wbr><a href="index.html">config</a></div><h1>Function <span class="fn">default_<wbr>log_<wbr>dir</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/mcp_airlock/config.rs.html#183-188">Source</a> </span></div><pre class="rust item-decl"><code>pub fn default_log_dir() -&gt; <a class="struct" href="https://doc.rust-lang.org/1.99.0/std/path/struct.PathBuf.html" title="struct std::path::PathBuf">PathBuf</a></code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p><code>$XDG_STATE_HOME/mcp-airlock/logs</code> on Linux, the local data directory on
+macOS and Windows, and a per-user temp directory as a last resort.</p>
+</div></details></section></div></main></body></html>

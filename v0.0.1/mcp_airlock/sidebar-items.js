@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["run","run_with_vault","validate_config"],"mod":["auth","config","crypto","logging","proxy","templates","vault"],"type":["Result"]};

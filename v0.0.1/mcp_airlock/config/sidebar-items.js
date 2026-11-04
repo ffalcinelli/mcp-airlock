@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AuthScheme"],"fn":["default_log_dir"],"struct":["Config"]};
